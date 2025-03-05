@@ -40,12 +40,12 @@ struct CursorView: View {
                 Button(action: {}) {
                     Text("Today")
                         .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.blue)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(16)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.black)
+                        .padding(12)
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
                 
                 Spacer()
@@ -54,31 +54,45 @@ struct CursorView: View {
                     HStack {
                         Text(selectedDateRange)
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .foregroundColor(.black)
                         
                         Image(systemName: "chevron.down")
                             .font(.caption)
+                            .foregroundColor(.black)
                     }
-                    .foregroundColor(.primary)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(16)
+                    .padding(12)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
                 
                 Spacer()
                 
-                HStack(spacing: 16) {
+                // Navigation buttons group
+                HStack(spacing: 0) {
                     Button(action: {}) {
                         Image(systemName: "chevron.left")
-                            .foregroundColor(.blue)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .padding(12)
                     }
+                    
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 1, height: 24)
                     
                     Button(action: {}) {
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.blue)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .padding(12)
                     }
                 }
+                .background(Color.white)
+                .cornerRadius(8)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
             .padding(.horizontal)
             .padding(.bottom, 16)
