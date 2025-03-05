@@ -99,103 +99,119 @@ struct CursorView: View {
             
             // Calendar grid
             ScrollView {
-                HStack(spacing: 0) {
-                    // Fixed first column with room names
-                    VStack(spacing: 0) {
-                        // Empty header cell
-                        Rectangle()
-                            .fill(Color.clear)
-                            .frame(width: 100, height: 70)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                            )
-                        
-                        // Summary cell
-                        Text("Summary")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .frame(width: 100, height: 50)
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        // Fixed first column with room names
+                        VStack(spacing: 0) {
+                            // Empty header cell
+                            Rectangle()
+                                .fill(Color.clear)
+                                .frame(width: geometry.size.width * 0.45, height: 70)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                )
+                            
+                            // Summary cell
+                            HStack {
+                                Text("Superior Room with Queen bed")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.gray.opacity(0.8))
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.gray.opacity(0.8))
+                            }
+                            .padding(.horizontal, 12)
+                            .frame(width: geometry.size.width * 0.45, height: 50)
                             .background(Color.gray.opacity(0.05))
                             .overlay(
                                 Rectangle()
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                             )
-                        
-                        // Room name cells
-                        ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                            Text(rooms[roomIndex])
-                                .font(.subheadline)
-                                .frame(width: 100, height: 60)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                )
-                        }
-                    }
-                    
-                    // Scrollable content for all rows
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            // Days header row
-                            HStack(spacing: 0) {
-                                ForEach(0..<7, id: \.self) { index in
-                                    VStack(spacing: 4) {
-                                        Text(daysOfWeek[index])
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.gray)
-                                        
-                                        Text(dates[index])
-                                            .font(.title3)
-                                            .fontWeight(.bold)
-                                        
-                                        Text(occupancyPercentages[index])
-                                            .font(.caption)
-                                            .foregroundColor(Color.green)
-                                    }
-                                    .frame(width: 80, height: 70)
+                            
+                            // Room name cells
+                            ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                Text(rooms[roomIndex])
+                                    .font(.subheadline)
+                                    .frame(width: geometry.size.width * 0.45, height: 60)
                                     .overlay(
                                         Rectangle()
                                             .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                                     )
-                                }
                             }
-                            
-                            // Summary row
-                            HStack(spacing: 0) {
-                                ForEach(0..<7, id: \.self) { index in
-                                    Text(averageIncomes[index])
-                                        .font(.subheadline)
-                                        .foregroundColor(.blue)
-                                        .frame(width: 80, height: 50)
-                                        .background(Color.gray.opacity(0.05))
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                        )
-                                }
-                            }
-                            
-                            // Room occupancy rows
-                            ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                        }
+                        
+                        // Scrollable content for all rows
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            VStack(spacing: 0) {
+                                // Days header row
                                 HStack(spacing: 0) {
-                                    ForEach(0..<7, id: \.self) { dayIndex in
-                                        ZStack {
-                                            Rectangle()
-                                                .fill(getOccupancyColor(for: roomIndex, on: dayIndex))
-                                                .frame(width: 80, height: 60)
+                                    ForEach(0..<7, id: \.self) { index in
+                                        VStack(spacing: 4) {
+                                            Text(daysOfWeek[index])
+                                                .font(.caption)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.gray)
                                             
-                                            if isOccupied(roomIndex, dayIndex) {
-                                                Text("Guest Name")
-                                                    .font(.caption)
-                                                    .foregroundColor(.white)
-                                            }
+                                            Text(dates[index])
+                                                .font(.title3)
+                                                .fontWeight(.bold)
+                                            
+                                            Text(occupancyPercentages[index])
+                                                .font(.caption)
+                                                .foregroundColor(Color.green)
                                         }
+                                        .frame(width: 80, height: 70)
                                         .overlay(
                                             Rectangle()
                                                 .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                                         )
+                                    }
+                                }
+                                
+                                // Summary row
+                                HStack(spacing: 0) {
+                                    ForEach(0..<7, id: \.self) { index in
+                                        Text(averageIncomes[index])
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.gray.opacity(0.8))
+                                            .frame(width: 80, height: 50)
+                                            .background(Color.gray.opacity(0.05))
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                            )
+                                    }
+                                }
+                                
+                                // Room occupancy rows
+                                ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                    HStack(spacing: 0) {
+                                        ForEach(0..<7, id: \.self) { dayIndex in
+                                            ZStack {
+                                                Rectangle()
+                                                    .fill(getOccupancyColor(for: roomIndex, on: dayIndex))
+                                                    .frame(width: 80, height: 60)
+                                                
+                                                if isOccupied(roomIndex, dayIndex) {
+                                                    Text("Guest Name")
+                                                        .font(.caption)
+                                                        .foregroundColor(.white)
+                                                }
+                                            }
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                            )
+                                        }
                                     }
                                 }
                             }
