@@ -262,7 +262,11 @@ struct CursorView: View {
                 Button(action: {}) {
                     Image(systemName: "plus")
                         .font(.headline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
+                        .frame(width: 36, height: 36)
+                        .background(Color.blue)
+                        .clipShape(Circle())
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 }
             }
         }
