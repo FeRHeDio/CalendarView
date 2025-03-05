@@ -225,9 +225,17 @@ struct CursorView: View {
                 
                 // Title and subtitle
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Luxury Place")
-                        .font(.headline)
-                        .fontWeight(.bold)
+                    HStack {
+                        Text("Luxury Place")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        
+                        Button(action: {}) {
+                            Image(systemName: "chevron.down")
+                                .font(.caption)
+                                .foregroundColor(.primary)
+                        }
+                    }
                     
                     Text("Dashboard")
                         .font(.subheadline)
@@ -239,12 +247,6 @@ struct CursorView: View {
             
             // Right side buttons
             HStack(spacing: 16) {
-                Button(action: {}) {
-                    Image(systemName: "chevron.down")
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                }
-                
                 // Circular lens icon with shadow
                 Button(action: {}) {
                     Image(systemName: "magnifyingglass")
