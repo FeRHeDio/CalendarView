@@ -85,10 +85,10 @@ struct CursorView: View {
             
             // Calendar grid
             ScrollView {
-                VStack(spacing: 0) {
-                    // Days header row
-                    HStack(spacing: 0) {
-                        // Fixed first column
+                HStack(spacing: 0) {
+                    // Fixed first column with room names
+                    VStack(spacing: 0) {
+                        // Empty header cell
                         Rectangle()
                             .fill(Color.clear)
                             .frame(width: 100, height: 70)
@@ -97,8 +97,33 @@ struct CursorView: View {
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                             )
                         
-                        // Scrollable day columns
-                        ScrollView(.horizontal, showsIndicators: false) {
+                        // Summary cell
+                        Text("Summary")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .frame(width: 100, height: 50)
+                            .background(Color.gray.opacity(0.05))
+                            .overlay(
+                                Rectangle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                            )
+                        
+                        // Room name cells
+                        ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                            Text(rooms[roomIndex])
+                                .font(.subheadline)
+                                .frame(width: 100, height: 60)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                )
+                        }
+                    }
+                    
+                    // Scrollable content for all rows
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            // Days header row
                             HStack(spacing: 0) {
                                 ForEach(0..<7, id: \.self) { index in
                                     VStack(spacing: 4) {
@@ -122,24 +147,8 @@ struct CursorView: View {
                                     )
                                 }
                             }
-                        }
-                    }
-                    
-                    // Summary row
-                    HStack(spacing: 0) {
-                        // Fixed first column
-                        Text("Summary")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .frame(width: 100, height: 50)
-                            .background(Color.gray.opacity(0.05))
-                            .overlay(
-                                Rectangle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                            )
-                        
-                        // Scrollable income columns
-                        ScrollView(.horizontal, showsIndicators: false) {
+                            
+                            // Summary row
                             HStack(spacing: 0) {
                                 ForEach(0..<7, id: \.self) { index in
                                     Text(averageIncomes[index])
@@ -153,23 +162,9 @@ struct CursorView: View {
                                         )
                                 }
                             }
-                        }
-                    }
-                    
-                    // Room occupancy rows
-                    ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                        HStack(spacing: 0) {
-                            // Fixed room name column
-                            Text(rooms[roomIndex])
-                                .font(.subheadline)
-                                .frame(width: 100, height: 60)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                )
                             
-                            // Scrollable occupancy columns
-                            ScrollView(.horizontal, showsIndicators: false) {
+                            // Room occupancy rows
+                            ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                 HStack(spacing: 0) {
                                     ForEach(0..<7, id: \.self) { dayIndex in
                                         ZStack {
