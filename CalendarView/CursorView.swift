@@ -113,27 +113,28 @@ struct CursorView: View {
                                 )
                             
                             // Summary cell
-                            HStack {
+                            HStack(alignment: .center) {
                                 Text("Superior Room with Queen bed")
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.gray.opacity(0.8))
-                                    .lineLimit(1)
+                                    .foregroundColor(.black.opacity(0.8))
+                                    .lineLimit(2)
                                     .truncationMode(.tail)
+                                    .multilineTextAlignment(.leading)
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.gray.opacity(0.8))
+                                    .foregroundColor(.black.opacity(0.8))
                             }
                             .padding(.horizontal, 12)
-                            .frame(width: geometry.size.width * 0.45, height: 50)
-                            .background(Color.gray.opacity(0.05))
+                            .frame(width: geometry.size.width * 0.45, height: 60)
+                            .background(Color.gray.opacity(0.02))
                             .overlay(
                                 Rectangle()
-                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                             )
                             
                             // Room name cells
@@ -182,12 +183,12 @@ struct CursorView: View {
                                         Text(averageIncomes[index])
                                             .font(.subheadline)
                                             .fontWeight(.semibold)
-                                            .foregroundColor(.gray.opacity(0.8))
-                                            .frame(width: 80, height: 50)
-                                            .background(Color.gray.opacity(0.05))
+                                            .foregroundColor(.black.opacity(0.8))
+                                            .frame(width: 80, height: 60)
+                                            .background(Color.gray.opacity(0.02))
                                             .overlay(
                                                 Rectangle()
-                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                             )
                                     }
                                 }
