@@ -155,19 +155,27 @@ struct CursorView: View {
                                 // Days header row
                                 HStack(spacing: 0) {
                                     ForEach(0..<7, id: \.self) { index in
-                                        VStack(spacing: 4) {
-                                            Text(daysOfWeek[index])
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.gray)
+                                        VStack {
+                                            HStack(spacing: 4) {
+                                                Text(daysOfWeek[index])
+                                                    .font(.subheadline)
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                                
+                                                Text(dates[index])
+                                                    .font(.subheadline)
+                                                    .fontWeight(.bold)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                            }
+                                            .padding(.top, 12)
                                             
-                                            Text(dates[index])
-                                                .font(.title3)
-                                                .fontWeight(.bold)
+                                            Spacer()
                                             
                                             Text(occupancyPercentages[index])
                                                 .font(.caption)
-                                                .foregroundColor(Color.green)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.gray.opacity(0.8))
+                                                .padding(.bottom, 12)
                                         }
                                         .frame(width: 80, height: 70)
                                         .overlay(
