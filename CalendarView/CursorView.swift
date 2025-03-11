@@ -15,6 +15,22 @@ struct CursorView: View {
     private let rooms = ["Room A", "Room B", "Room C", "Room D"]
     private let averageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
     
+    // Guest data
+    private struct Guest {
+        let name: String
+        let color: Color
+        let room: Int
+        let startDate: Int
+        let endDate: Int
+    }
+    
+    private let guests = [
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 17),  // Pastel green
+        Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18), // Pastel blue
+        Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20), // Pastel violet
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21)   // Pastel green (same guest)
+    ]
+    
     @State private var selectedDateRange = "Mar 15 - Mar 21"
     
     var body: some View {
@@ -206,10 +222,13 @@ struct CursorView: View {
                                                     .fill(getOccupancyColor(for: roomIndex, on: dayIndex))
                                                     .frame(width: 80, height: 60)
                                                 
-                                                if isOccupied(roomIndex, dayIndex) {
-                                                    Text("Guest Name")
+                                                if let guest = getOccupyingGuest(roomIndex, dayIndex) {
+                                                    Text(guest.name)
                                                         .font(.caption)
-                                                        .foregroundColor(.white)
+                                                        .foregroundColor(.black.opacity(0.7))
+                                                        .lineLimit(2)
+                                                        .multilineTextAlignment(.center)
+                                                        .padding(.horizontal, 4)
                                                 }
                                             }
                                             .overlay(
@@ -231,15 +250,21 @@ struct CursorView: View {
     
     // Helper function to determine occupancy color
     private func getOccupancyColor(for room: Int, on day: Int) -> Color {
-        // Sample logic - in a real app this would be based on actual data
-        let occupied = isOccupied(room, day)
-        return occupied ? Color.blue : Color.clear
+        let currentDate = Int(dates[day]) ?? 0
+        if let guest = guests.first(where: { $0.room == room && 
+            currentDate >= $0.startDate && 
+            currentDate <= $0.endDate }) {
+            return guest.color
+        }
+        return Color.clear
     }
     
-    // Helper function to determine if a room is occupied
-    private func isOccupied(_ room: Int, _ day: Int) -> Bool {
-        // Sample logic - in a real app this would be based on actual data
-        return (room + day) % 3 == 0
+    // Helper function to determine if a room is occupied and by whom
+    private func getOccupyingGuest(_ room: Int, _ day: Int) -> Guest? {
+        let currentDate = Int(dates[day]) ?? 0
+        return guests.first(where: { $0.room == room && 
+            currentDate >= $0.startDate && 
+            currentDate <= $0.endDate })
     }
     
     // Header component
