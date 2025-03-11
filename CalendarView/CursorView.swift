@@ -215,28 +215,7 @@ struct CursorView: View {
                                 
                                 // Room occupancy rows
                                 ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                    HStack(spacing: 0) {
-                                        ForEach(0..<7, id: \.self) { dayIndex in
-                                            ZStack {
-                                                Rectangle()
-                                                    .fill(getOccupancyColor(for: roomIndex, on: dayIndex))
-                                                    .frame(width: 80, height: 60)
-                                                
-                                                if let guest = getOccupyingGuest(roomIndex, dayIndex) {
-                                                    Text(guest.name)
-                                                        .font(.caption)
-                                                        .foregroundColor(.black.opacity(0.7))
-                                                        .lineLimit(2)
-                                                        .multilineTextAlignment(.center)
-                                                        .padding(.horizontal, 4)
-                                                }
-                                            }
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                            )
-                                        }
-                                    }
+                                    occupancyRow(for: roomIndex, geometry: geometry)
                                 }
                             }
                         }
@@ -246,6 +225,103 @@ struct CursorView: View {
             
             Spacer()
         }
+    }
+    
+    // Extracted occupancy row view
+    private func occupancyRow(for roomIndex: Int, geometry: GeometryProxy) -> some View {
+        HStack(spacing: 0) {
+            // First, identify continuous stays for this room
+            var stayRanges: [(guest: Guest, startIndex: Int, endIndex: Int)] = []
+            var currentGuest: Guest? = nil
+            var startIndex = -1
+            
+            // Find all continuous stays in this row
+            for dayIndex in 0..<7 {
+                if let guest = getOccupyingGuest(roomIndex, dayIndex) {
+                    if currentGuest == nil || currentGuest?.name != guest.name {
+                        // Start of a new stay
+                        if currentGuest != nil {
+                            // End previous stay
+                            stayRanges.append((guest: currentGuest!, startIndex: startIndex, endIndex: dayIndex - 1))
+                        }
+                        currentGuest = guest
+                        startIndex = dayIndex
+                    }
+                    
+                    // If we're at the last day, end the current stay
+                    if dayIndex == 6 {
+                        stayRanges.append((guest: guest, startIndex: startIndex, endIndex: dayIndex))
+                    }
+                } else if currentGuest != nil {
+                    // End of a stay
+                    stayRanges.append((guest: currentGuest!, startIndex: startIndex, endIndex: dayIndex - 1))
+                    currentGuest = nil
+                }
+            }
+            
+            // Now render the cells with labels in the middle of stays
+            return ZStack(alignment: .leading) {
+                // Background cells
+                HStack(spacing: 0) {
+                    ForEach(0..<7, id: \.self) { dayIndex in
+                        if let guest = getOccupyingGuest(roomIndex, dayIndex) {
+                            Rectangle()
+                                .fill(guest.color)
+                                .frame(width: 80, height: 60)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                )
+                        } else {
+                            Rectangle()
+                                .fill(Color.clear)
+                                .frame(width: 80, height: 60)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                )
+                        }
+                    }
+                }
+                
+                // Labels positioned in the middle of each stay
+                ForEach(stayRanges.indices, id: \.self) { index in
+                    let stay = stayRanges[index]
+                    let stayWidth = CGFloat(stay.endIndex - stay.startIndex + 1) * 80
+                    let labelOffset = CGFloat(stay.startIndex) * 80 + stayWidth / 2
+                    
+                    // Create a darker version of the guest's color for text
+                    let darkerColor = darkenColor(stay.guest.color)
+                    
+                    Text(stay.guest.name)
+                        .font(.system(size: 11, weight: .medium, design: .default))
+                        .foregroundColor(darkerColor)
+                        .padding(.horizontal, 4)
+                        .frame(width: stayWidth)
+                        .position(x: labelOffset, y: 30) // Center vertically in the 60-height cell
+                }
+            }
+        }
+    }
+    
+    // Helper function to create a darker version of a color for better text readability
+    private func darkenColor(_ color: Color) -> Color {
+        // Extract RGB components using UIColor
+        let uiColor = UIColor(color)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        // Darken the color by reducing RGB values
+        let darkeningFactor: CGFloat = 0.5
+        return Color(
+            red: max(red - darkeningFactor, 0),
+            green: max(green - darkeningFactor, 0),
+            blue: max(blue - darkeningFactor, 0)
+        )
     }
     
     // Helper function to determine occupancy color
