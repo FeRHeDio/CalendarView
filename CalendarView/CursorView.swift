@@ -103,14 +103,9 @@ struct CursorView: View {
                     HStack(spacing: 0) {
                         // Fixed first column with room names
                         VStack(spacing: 0) {
-                            // Empty header cell
                             Rectangle()
                                 .fill(Color.clear)
-                                .frame(width: geometry.size.width * 0.45, height: 70)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                )
+                                .frame(width: geometry.size.width * 0.35, height: 70)
                             
                             // Summary cell
                             HStack(alignment: .center) {
@@ -130,8 +125,8 @@ struct CursorView: View {
                                     .foregroundColor(.black.opacity(0.8))
                             }
                             .padding(.horizontal, 12)
-                            .frame(width: geometry.size.width * 0.45, height: 60)
-                            .background(Color.gray.opacity(0.02))
+                            .frame(width: geometry.size.width * 0.35, height: 60)
+                            .background(Color.white)
                             .overlay(
                                 Rectangle()
                                     .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
@@ -141,7 +136,8 @@ struct CursorView: View {
                             ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                 Text(rooms[roomIndex])
                                     .font(.subheadline)
-                                    .frame(width: geometry.size.width * 0.45, height: 60)
+                                    .frame(width: geometry.size.width * 0.35, height: 60)
+                                    .background(Color.white)
                                     .overlay(
                                         Rectangle()
                                             .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
@@ -184,6 +180,7 @@ struct CursorView: View {
                                         )
                                     }
                                 }
+                                .padding(.leading, geometry.size.width * 0.35)
                                 
                                 // Summary row
                                 HStack(spacing: 0) {
@@ -200,6 +197,7 @@ struct CursorView: View {
                                             )
                                     }
                                 }
+                                .padding(.leading, geometry.size.width * 0.35)
                                 
                                 // Room occupancy rows
                                 ForEach(0..<rooms.count, id: \.self) { roomIndex in
@@ -222,6 +220,7 @@ struct CursorView: View {
                                             )
                                         }
                                     }
+                                    .padding(.leading, geometry.size.width * 0.35)
                                 }
                             }
                         }
@@ -315,3 +314,4 @@ struct CursorView: View {
 #Preview {
     CursorView()
 }
+
