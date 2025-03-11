@@ -261,44 +261,36 @@ struct CursorView: View {
             
             // Now render the cells with labels in the middle of stays
             return ZStack(alignment: .leading) {
-                // Background cells
+                // Background cells - empty cells with borders
                 HStack(spacing: 0) {
                     ForEach(0..<7, id: \.self) { dayIndex in
-                        if let guest = getOccupyingGuest(roomIndex, dayIndex) {
-                            Rectangle()
-                                .fill(guest.color)
-                                .frame(width: 80, height: 60)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                )
-                        } else {
-                            Rectangle()
-                                .fill(Color.clear)
-                                .frame(width: 80, height: 60)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                )
-                        }
+                        Rectangle()
+                            .fill(Color.white)
+                            .frame(width: 80, height: 60)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                            )
                     }
                 }
                 
-                // Labels positioned in the middle of each stay
+                // Shaped occupancy containers
                 ForEach(stayRanges.indices, id: \.self) { index in
                     let stay = stayRanges[index]
                     let stayWidth = CGFloat(stay.endIndex - stay.startIndex + 1) * 80
-                    let labelOffset = CGFloat(stay.startIndex) * 80 + stayWidth / 2
+                    let stayOffset = CGFloat(stay.startIndex) * 80
                     
-                    // Create a darker version of the guest's color for text
-                    let darkerColor = darkenColor(stay.guest.color)
-                    
-                    Text(stay.guest.name)
-                        .font(.system(size: 11, weight: .medium, design: .default))
-                        .foregroundColor(darkerColor)
-                        .padding(.horizontal, 4)
-                        .frame(width: stayWidth)
-                        .position(x: labelOffset, y: 30) // Center vertically in the 60-height cell
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(stay.guest.color)
+                        .frame(width: stayWidth - 32, height: 44)
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                        .overlay(
+                            Text(stay.guest.name)
+                                .font(.system(size: 11, weight: .medium, design: .default))
+                                .foregroundColor(darkenColor(stay.guest.color))
+                                .padding(.horizontal, 4)
+                        )
+                        .position(x: stayOffset + stayWidth/2, y: 30) // Center in the cell
                 }
             }
         }
