@@ -180,7 +180,6 @@ struct CursorView: View {
                                         )
                                     }
                                 }
-                                .padding(.leading, geometry.size.width * 0.35)
                                 
                                 // Summary row
                                 HStack(spacing: 0) {
@@ -197,7 +196,6 @@ struct CursorView: View {
                                             )
                                     }
                                 }
-                                .padding(.leading, geometry.size.width * 0.35)
                                 
                                 // Room occupancy rows
                                 ForEach(0..<rooms.count, id: \.self) { roomIndex in
@@ -220,7 +218,6 @@ struct CursorView: View {
                                             )
                                         }
                                     }
-                                    .padding(.leading, geometry.size.width * 0.35)
                                 }
                             }
                         }
