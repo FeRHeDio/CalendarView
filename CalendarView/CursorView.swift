@@ -29,6 +29,7 @@ struct CursorView: View {
     
     // Current week selection
     @State private var currentWeek = 0 // 0 = week1, 1 = week2
+    @State private var isWeekPickerVisible = false
     
     // Computed properties for current week data
     private var dates: [String] {
@@ -119,21 +120,94 @@ struct CursorView: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
-                    HStack {
-                        Text(selectedDateRange)
-                            .font(.subheadline)
-                            .foregroundColor(.black)
-                        
-                        Image(systemName: "chevron.down")
-                            .font(.caption)
-                            .foregroundColor(.black)
+                // Week picker with dropdown
+                ZStack(alignment: .top) {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isWeekPickerVisible.toggle()
+                        }
+                    }) {
+                        HStack {
+                            Text(selectedDateRange)
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                            
+                            Image(systemName: isWeekPickerVisible ? "chevron.up" : "chevron.down")
+                                .font(.caption)
+                                .foregroundColor(.black)
+                        }
+                        .padding(12)
+                        .background(Color.white)
+                        .cornerRadius(8)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                     }
-                    .padding(12)
-                    .background(Color.white)
-                    .cornerRadius(8)
-                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    
+                    // Dropdown menu
+                    if isWeekPickerVisible {
+                        VStack(spacing: 0) {
+                            // Spacer to push dropdown below the button
+                            Rectangle()
+                                .fill(Color.clear)
+                                .frame(height: 50)
+                            
+                            // Week options
+                            VStack(spacing: 0) {
+                                Button(action: {
+                                    withAnimation {
+                                        currentWeek = 0
+                                        isWeekPickerVisible = false
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Mar 15 - Mar 21")
+                                            .font(.subheadline)
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        if currentWeek == 0 {
+                                            Image(systemName: "checkmark")
+                                                .font(.caption)
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(currentWeek == 0 ? Color.gray.opacity(0.1) : Color.white)
+                                    .contentShape(Rectangle())
+                                }
+                                
+                                Divider()
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        currentWeek = 1
+                                        isWeekPickerVisible = false
+                                    }
+                                }) {
+                                    HStack {
+                                        Text("Mar 22 - Mar 28")
+                                            .font(.subheadline)
+                                            .foregroundColor(.black)
+                                        Spacer()
+                                        if currentWeek == 1 {
+                                            Image(systemName: "checkmark")
+                                                .font(.caption)
+                                                .foregroundColor(.blue)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(currentWeek == 1 ? Color.gray.opacity(0.1) : Color.white)
+                                    .contentShape(Rectangle())
+                                }
+                            }
+                            .background(Color.white)
+                            .cornerRadius(8)
+                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+                        }
+                        .zIndex(1)
+                    }
                 }
+                .zIndex(isWeekPickerVisible ? 100 : 1)
                 
                 Spacer()
                 
@@ -368,7 +442,13 @@ struct CursorView: View {
             
             Spacer()
         }
-        
+        .onTapGesture {
+            if isWeekPickerVisible {
+                withAnimation {
+                    isWeekPickerVisible = false
+                }
+            }
+        }
     }
     
     // Extracted occupancy row view
