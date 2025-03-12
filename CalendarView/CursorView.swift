@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Inject
 
 struct CursorView: View {
     // Sample data
@@ -25,13 +26,14 @@ struct CursorView: View {
     }
     
     private let guests = [
-        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 17),  // Pastel green
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 16),  // Pastel green
         Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18), // Pastel blue
         Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20), // Pastel violet
         Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21)   // Pastel green (same guest)
     ]
     
     @State private var selectedDateRange = "Mar 15 - Mar 21"
+    @ObserveInjection var redraw
     
     var body: some View {
         VStack(spacing: 0) {
@@ -225,6 +227,7 @@ struct CursorView: View {
             
             Spacer()
         }
+        .enableInjection()
     }
     
     // Extracted occupancy row view
