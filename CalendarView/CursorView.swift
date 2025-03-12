@@ -43,6 +43,8 @@ struct CursorView: View {
     ]
     
     @State private var selectedDateRange = "Mar 15 - Mar 21"
+    @State private var isSuperiorRoomsCollapsed = false
+    @State private var isStandardRoomsCollapsed = false
 
     
     var body: some View {
@@ -147,10 +149,16 @@ struct CursorView: View {
                                 
                                 Spacer()
                                 
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.black.opacity(0.8))
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        isSuperiorRoomsCollapsed.toggle()
+                                    }
+                                }) {
+                                    Image(systemName: isSuperiorRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.black.opacity(0.8))
+                                }
                             }
                             .padding(.horizontal, 12)
                             .frame(width: geometry.size.width * 0.35, height: 60)
@@ -161,15 +169,17 @@ struct CursorView: View {
                             )
                             
                             // Superior room name cells
-                            ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                Text(rooms[roomIndex])
-                                    .font(.subheadline)
-                                    .frame(width: geometry.size.width * 0.35, height: 60)
-                                    .background(Color.white)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                    )
+                            if !isSuperiorRoomsCollapsed {
+                                ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                    Text(rooms[roomIndex])
+                                        .font(.subheadline)
+                                        .frame(width: geometry.size.width * 0.35, height: 60)
+                                        .background(Color.white)
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                        )
+                                }
                             }
                             
                             // Standard Room section
@@ -184,10 +194,16 @@ struct CursorView: View {
                                 
                                 Spacer()
                                 
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.black.opacity(0.8))
+                                Button(action: {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        isStandardRoomsCollapsed.toggle()
+                                    }
+                                }) {
+                                    Image(systemName: isStandardRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.black.opacity(0.8))
+                                }
                             }
                             .padding(.horizontal, 12)
                             .frame(width: geometry.size.width * 0.35, height: 60)
@@ -198,15 +214,17 @@ struct CursorView: View {
                             )
                             
                             // Standard room name cells
-                            ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                Text(standardRooms[roomIndex])
-                                    .font(.subheadline)
-                                    .frame(width: geometry.size.width * 0.35, height: 60)
-                                    .background(Color.white)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                    )
+                            if !isStandardRoomsCollapsed {
+                                ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                    Text(standardRooms[roomIndex])
+                                        .font(.subheadline)
+                                        .frame(width: geometry.size.width * 0.35, height: 60)
+                                        .background(Color.white)
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                        )
+                                }
                             }
                         }
                         
@@ -263,8 +281,10 @@ struct CursorView: View {
                                 }
                                 
                                 // Superior Room occupancy rows
-                                ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                    occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
+                                if !isSuperiorRoomsCollapsed {
+                                    ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                        occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
+                                    }
                                 }
                                 
                                 // Summary row for Standard Rooms
@@ -284,8 +304,10 @@ struct CursorView: View {
                                 }
                                 
                                 // Standard Room occupancy rows
-                                ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                    occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
+                                if !isStandardRoomsCollapsed {
+                                    ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                        occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
+                                    }
                                 }
                             }
                         }
