@@ -139,192 +139,247 @@ struct CursorView: View {
                 }
                 
                 // Calendar grid
-                ScrollView {
-                    GeometryReader { gridGeometry in
-                        HStack(spacing: 0) {
-                            // Fixed first column with room names
-                            VStack(spacing: 0) {
-                                Rectangle()
-                                    .fill(Color.clear)
-                                    .frame(width: getFixedColumnWidth(gridGeometry), height: 70)
-                                
-                                // Superior Room section
-                                HStack(alignment: .center) {
-                                    Text("Superior Room with Queen bed")
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        GeometryReader { gridGeometry in
+                            HStack(spacing: 0) {
+                                // Fixed first column with room names
+                                VStack(spacing: 0) {
+                                    // Header placeholder (for days row)
+                                    Rectangle()
+                                        .fill(Color.clear)
+                                        .frame(width: getFixedColumnWidth(gridGeometry), height: 70)
+                                    
+                                    // Superior Room summary placeholder
+                                    Text("Superior Room")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.black.opacity(0.8))
-                                        .lineLimit(2)
-                                        .truncationMode(.tail)
-                                        .multilineTextAlignment(.leading)
+                                        .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                        .background(Color.gray.opacity(0.02))
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                        )
                                     
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        withAnimation(.easeInOut(duration: 0.3)) {
-                                            isSuperiorRoomsCollapsed.toggle()
-                                        }
-                                    }) {
-                                        Image(systemName: isSuperiorRoomsCollapsed ? "chevron.down" : "chevron.right")
-                                            .font(.caption)
+                                    // Superior Room section
+                                    HStack(alignment: .center) {
+                                        Text("Superior Room with Queen bed")
+                                            .font(.subheadline)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.black.opacity(0.8))
+                                            .lineLimit(2)
+                                            .truncationMode(.tail)
+                                            .multilineTextAlignment(.leading)
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            withAnimation(.easeInOut(duration: 0.3)) {
+                                                isSuperiorRoomsCollapsed.toggle()
+                                            }
+                                        }) {
+                                            Image(systemName: isSuperiorRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                                .font(.caption)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.black.opacity(0.8))
+                                        }
                                     }
-                                }
-                                .padding(.horizontal, 12)
-                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
-                                .background(Color.white)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                                )
-                                
-                                // Superior room name cells
-                                if !isSuperiorRoomsCollapsed {
-                                    ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                        Text(rooms[roomIndex])
-                                            .font(.subheadline)
-                                            .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
-                                            .background(Color.white)
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                            )
+                                    .padding(.horizontal, 12)
+                                    .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                    .background(Color.white)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                    )
+                                    
+                                    // Superior room name cells
+                                    if !isSuperiorRoomsCollapsed {
+                                        ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                            Text(rooms[roomIndex])
+                                                .font(.subheadline)
+                                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                                .background(Color.white)
+                                                .overlay(
+                                                    Rectangle()
+                                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                                )
+                                        }
                                     }
-                                }
-                                
-                                // Standard Room section
-                                HStack(alignment: .center) {
+                                    
+                                    // Standard Room summary placeholder
                                     Text("Standard Room")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.black.opacity(0.8))
-                                        .lineLimit(2)
-                                        .truncationMode(.tail)
-                                        .multilineTextAlignment(.leading)
+                                        .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                        .background(Color.gray.opacity(0.02))
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                        )
                                     
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        withAnimation(.easeInOut(duration: 0.3)) {
-                                            isStandardRoomsCollapsed.toggle()
-                                        }
-                                    }) {
-                                        Image(systemName: isStandardRoomsCollapsed ? "chevron.down" : "chevron.right")
-                                            .font(.caption)
+                                    // Standard Room section
+                                    HStack(alignment: .center) {
+                                        Text("Standard Room")
+                                            .font(.subheadline)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.black.opacity(0.8))
-                                    }
-                                }
-                                .padding(.horizontal, 12)
-                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
-                                .background(Color.white)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                                )
-                                
-                                // Standard room name cells
-                                if !isStandardRoomsCollapsed {
-                                    ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                        Text(standardRooms[roomIndex])
-                                            .font(.subheadline)
-                                            .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
-                                            .background(Color.white)
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                            )
-                                    }
-                                }
-                            }
-                            
-                            // Scrollable content for all rows
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                VStack(spacing: 0) {
-                                    // Days header row
-                                    HStack(spacing: 0) {
-                                        ForEach(0..<7, id: \.self) { index in
-                                            VStack {
-                                                HStack(spacing: 4) {
-                                                    Text(daysOfWeek[index])
-                                                        .font(.subheadline)
-                                                        .fontWeight(.semibold)
-                                                        .foregroundColor(.gray.opacity(0.8))
-                                                    
-                                                    Text(dates[index])
-                                                        .font(.subheadline)
-                                                        .fontWeight(.bold)
-                                                        .foregroundColor(.gray.opacity(0.8))
-                                                }
-                                                .padding(.top, 12)
-                                                
-                                                Spacer()
-                                                
-                                                Text(occupancyPercentages[index])
-                                                    .font(.caption)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                                    .padding(.bottom, 12)
+                                            .lineLimit(2)
+                                            .truncationMode(.tail)
+                                            .multilineTextAlignment(.leading)
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            withAnimation(.easeInOut(duration: 0.3)) {
+                                                isStandardRoomsCollapsed.toggle()
                                             }
-                                            .frame(width: getDayColumnWidth(), height: 70)
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                            )
-                                        }
-                                    }
-                                    
-                                    // Summary row for Superior Rooms
-                                    HStack(spacing: 0) {
-                                        ForEach(0..<7, id: \.self) { index in
-                                            Text(averageIncomes[index])
-                                                .font(.subheadline)
+                                        }) {
+                                            Image(systemName: isStandardRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                                .font(.caption)
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(.black.opacity(0.8))
-                                                .frame(width: getDayColumnWidth(), height: 60)
-                                                .background(Color.gray.opacity(0.02))
-                                                .overlay(
-                                                    Rectangle()
-                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                                                )
                                         }
                                     }
+                                    .padding(.horizontal, 12)
+                                    .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                    .background(Color.white)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                    )
                                     
-                                    // Superior Room occupancy rows
-                                    if !isSuperiorRoomsCollapsed {
-                                        ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                            occupancyRow(for: roomIndex, isStandardRoom: false, geometry: gridGeometry)
-                                        }
-                                    }
-                                    
-                                    // Summary row for Standard Rooms
-                                    HStack(spacing: 0) {
-                                        ForEach(0..<7, id: \.self) { index in
-                                            Text(averageIncomes[index])
-                                                .font(.subheadline)
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(.black.opacity(0.8))
-                                                .frame(width: getDayColumnWidth(), height: 60)
-                                                .background(Color.gray.opacity(0.02))
-                                                .overlay(
-                                                    Rectangle()
-                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                                                )
-                                        }
-                                    }
-                                    
-                                    // Standard Room occupancy rows
+                                    // Standard room name cells
                                     if !isStandardRoomsCollapsed {
                                         ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                            occupancyRow(for: roomIndex, isStandardRoom: true, geometry: gridGeometry)
+                                            Text(standardRooms[roomIndex])
+                                                .font(.subheadline)
+                                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
+                                                .background(Color.white)
+                                                .overlay(
+                                                    Rectangle()
+                                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                                )
                                         }
                                     }
                                 }
+                                
+                                // Scrollable content for all rows
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    VStack(spacing: 0) {
+                                        // Days header row
+                                        HStack(spacing: 0) {
+                                            ForEach(0..<7, id: \.self) { index in
+                                                VStack(spacing: 0) {
+                                                    HStack(spacing: 4) {
+                                                        Text(daysOfWeek[index])
+                                                            .font(.subheadline)
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(.gray.opacity(0.8))
+                                                        
+                                                        Text(dates[index])
+                                                            .font(.subheadline)
+                                                            .fontWeight(.bold)
+                                                            .foregroundColor(.gray.opacity(0.8))
+                                                    }
+                                                    .padding(.top, 12)
+                                                    
+                                                    Spacer()
+                                                    
+                                                    Text(occupancyPercentages[index])
+                                                        .font(.caption)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                        .padding(.bottom, 12)
+                                                }
+                                                .frame(width: getDayColumnWidth(), height: 70)
+                                                .overlay(
+                                                    Rectangle()
+                                                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                                )
+                                            }
+                                        }
+                                        
+                                        // Summary row for Superior Rooms
+                                        HStack(spacing: 0) {
+                                            ForEach(0..<7, id: \.self) { index in
+                                                Text(averageIncomes[index])
+                                                    .font(.subheadline)
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(.black.opacity(0.8))
+                                                    .frame(width: getDayColumnWidth(), height: 60)
+                                                    .background(Color.gray.opacity(0.02))
+                                                    .overlay(
+                                                        Rectangle()
+                                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                    )
+                                            }
+                                        }
+                                        
+                                        // Empty row for Superior Room section header
+                                        HStack(spacing: 0) {
+                                            ForEach(0..<7, id: \.self) { _ in
+                                                Rectangle()
+                                                    .fill(Color.white)
+                                                    .frame(width: getDayColumnWidth(), height: 60)
+                                                    .overlay(
+                                                        Rectangle()
+                                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                    )
+                                            }
+                                        }
+                                        
+                                        // Superior Room occupancy rows
+                                        if !isSuperiorRoomsCollapsed {
+                                            ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                                occupancyRow(for: roomIndex, isStandardRoom: false, geometry: gridGeometry)
+                                            }
+                                        }
+                                        
+                                        // Summary row for Standard Rooms
+                                        HStack(spacing: 0) {
+                                            ForEach(0..<7, id: \.self) { index in
+                                                Text(averageIncomes[index])
+                                                    .font(.subheadline)
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(.black.opacity(0.8))
+                                                    .frame(width: getDayColumnWidth(), height: 60)
+                                                    .background(Color.gray.opacity(0.02))
+                                                    .overlay(
+                                                        Rectangle()
+                                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                    )
+                                            }
+                                        }
+                                        
+                                        // Empty row for Standard Room section header
+                                        HStack(spacing: 0) {
+                                            ForEach(0..<7, id: \.self) { _ in
+                                                Rectangle()
+                                                    .fill(Color.white)
+                                                    .frame(width: getDayColumnWidth(), height: 60)
+                                                    .overlay(
+                                                        Rectangle()
+                                                            .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                    )
+                                            }
+                                        }
+                                        
+                                        // Standard Room occupancy rows
+                                        if !isStandardRoomsCollapsed {
+                                            ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                                occupancyRow(for: roomIndex, isStandardRoom: true, geometry: gridGeometry)
+                                            }
+                                        }
+                                    }
+                                }
+                                .scrollTargetLayout()
+                                .scrollTargetBehavior(.viewAligned)
                             }
-                            .scrollTargetLayout()
-                            .scrollTargetBehavior(.viewAligned)
+                            .frame(minHeight: gridGeometry.size.height)
                         }
+                        .frame(height: getCalendarHeight())
                     }
                 }
             }
@@ -332,7 +387,7 @@ struct CursorView: View {
                 // Set initial orientation
                 checkOrientation(size: geometry.size)
             }
-            .onChange(of: geometry.size) { newSize in
+            .onChange(of: geometry.size) { _, newSize in
                 // Update orientation when size changes
                 checkOrientation(size: newSize)
             }
@@ -572,6 +627,8 @@ struct CursorView: View {
                                 .font(.system(size: 11, weight: .medium, design: .default))
                                 .foregroundColor(darkenColor(stay.guest.color))
                                 .padding(.horizontal, 4)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                         )
                         .position(x: stayOffset + stayWidth/2, y: 30) // Center in the cell
                 }
@@ -683,6 +740,34 @@ struct CursorView: View {
                 }
             }
         }
+    }
+    
+    // Helper function to calculate calendar height based on collapsed state
+    private func getCalendarHeight() -> CGFloat {
+        let headerHeight: CGFloat = 70
+        let sectionHeaderHeight: CGFloat = 60
+        let summaryRowHeight: CGFloat = 60
+        let roomCellHeight: CGFloat = 60
+        
+        var totalHeight = headerHeight // Days header row
+        
+        // Superior Room section
+        totalHeight += summaryRowHeight // Superior Room summary placeholder
+        totalHeight += sectionHeaderHeight // Superior Room section header
+        
+        if !isSuperiorRoomsCollapsed {
+            totalHeight += roomCellHeight * CGFloat(rooms.count) // Superior room cells
+        }
+        
+        // Standard Room section
+        totalHeight += summaryRowHeight // Standard Room summary placeholder
+        totalHeight += sectionHeaderHeight // Standard Room section header
+        
+        if !isStandardRoomsCollapsed {
+            totalHeight += roomCellHeight * CGFloat(standardRooms.count) // Standard room cells
+        }
+        
+        return totalHeight
     }
 }
 
