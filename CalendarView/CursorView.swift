@@ -30,6 +30,11 @@ struct CursorView: View {
     // Current week selection
     @State private var currentWeek = 0 // 0 = week1, 1 = week2
     @State private var isWeekPickerVisible = false
+    @State private var isLandscape = false
+    
+    // Add environment values to detect orientation
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     
     // Computed properties for current week data
     private var dates: [String] {
@@ -88,356 +93,246 @@ struct CursorView: View {
 
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header component
-            headerView()
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                // Header component
+                headerView()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
+                
+                // Calendar title and navigation (conditional based on orientation)
+                HStack(alignment: .center) {
+                    Text("Calendar")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Spacer()
+                    
+                    // Only show navigation controls in the title row when in landscape
+                    if isLandscape {
+                        HStack(spacing: 16) {
+                            todayButton()
+                            weekPickerView()
+                            navigationButtonsView()
+                        }
+                    }
+                }
                 .padding(.horizontal)
-                .padding(.top, 8)
                 .padding(.bottom, 16)
-            
-            // Calendar title
-            HStack {
-                Text("Calendar")
-                    .font(.title)
-                    .fontWeight(.bold)
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 16)
-            
-            // Calendar navigation
-            HStack {
-                Button(action: {}) {
-                    Text("Today")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.black)
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                }
                 
-                Spacer()
-                
-                // Week picker with dropdown
-                ZStack(alignment: .top) {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isWeekPickerVisible.toggle()
-                        }
-                    }) {
-                        HStack {
-                            Text(selectedDateRange)
-                                .font(.subheadline)
-                                .foregroundColor(.black)
-                            
-                            Image(systemName: isWeekPickerVisible ? "chevron.up" : "chevron.down")
-                                .font(.caption)
-                                .foregroundColor(.black)
-                        }
-                        .padding(12)
-                        .background(Color.white)
-                        .cornerRadius(8)
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                    }
-                    
-                    // Dropdown menu
-                    if isWeekPickerVisible {
-                        VStack(spacing: 0) {
-                            // Spacer to push dropdown below the button
-                            Rectangle()
-                                .fill(Color.clear)
-                                .frame(height: 50)
-                            
-                            // Week options
-                            VStack(spacing: 0) {
-                                Button(action: {
-                                    withAnimation {
-                                        currentWeek = 0
-                                        isWeekPickerVisible = false
-                                    }
-                                }) {
-                                    HStack {
-                                        Text("Mar 15 - Mar 21")
-                                            .font(.subheadline)
-                                            .foregroundColor(.black)
-                                        Spacer()
-                                        if currentWeek == 0 {
-                                            Image(systemName: "checkmark")
-                                                .font(.caption)
-                                                .foregroundColor(.blue)
-                                        }
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 12)
-                                    .background(currentWeek == 0 ? Color.gray.opacity(0.1) : Color.white)
-                                    .contentShape(Rectangle())
-                                }
-                                
-                                Divider()
-                                
-                                Button(action: {
-                                    withAnimation {
-                                        currentWeek = 1
-                                        isWeekPickerVisible = false
-                                    }
-                                }) {
-                                    HStack {
-                                        Text("Mar 22 - Mar 28")
-                                            .font(.subheadline)
-                                            .foregroundColor(.black)
-                                        Spacer()
-                                        if currentWeek == 1 {
-                                            Image(systemName: "checkmark")
-                                                .font(.caption)
-                                                .foregroundColor(.blue)
-                                        }
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 12)
-                                    .background(currentWeek == 1 ? Color.gray.opacity(0.1) : Color.white)
-                                    .contentShape(Rectangle())
-                                }
-                            }
-                            .background(Color.white)
-                            .cornerRadius(8)
-                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
-                        }
-                        .zIndex(1)
-                    }
-                }
-                .zIndex(isWeekPickerVisible ? 100 : 1)
-                
-                Spacer()
-                
-                // Navigation buttons group
-                HStack(spacing: 0) {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            if currentWeek > 0 {
-                                currentWeek -= 1
-                            }
-                        }
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                            .padding(12)
-                    }
-                    
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 1, height: 24)
-                    
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            if currentWeek < 1 {
-                                currentWeek += 1
-                            }
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                            .padding(12)
-                    }
-                }
-                .background(Color.white)
-                .cornerRadius(8)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 16)
-            
-            // Calendar grid
-            ScrollView {
-                GeometryReader { geometry in
-                    HStack(spacing: 0) {
-                        // Fixed first column with room names
-                        VStack(spacing: 0) {
-                            Rectangle()
-                                .fill(Color.clear)
-                                .frame(width: geometry.size.width * 0.35, height: 70)
-                            
-                            // Superior Room section
-                            HStack(alignment: .center) {
-                                Text("Superior Room with Queen bed")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.black.opacity(0.8))
-                                    .lineLimit(2)
-                                    .truncationMode(.tail)
-                                    .multilineTextAlignment(.leading)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        isSuperiorRoomsCollapsed.toggle()
-                                    }
-                                }) {
-                                    Image(systemName: isSuperiorRoomsCollapsed ? "chevron.down" : "chevron.right")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.black.opacity(0.8))
-                                }
-                            }
-                            .padding(.horizontal, 12)
-                            .frame(width: geometry.size.width * 0.35, height: 60)
-                            .background(Color.white)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                            )
-                            
-                            // Superior room name cells
-                            if !isSuperiorRoomsCollapsed {
-                                ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                    Text(rooms[roomIndex])
-                                        .font(.subheadline)
-                                        .frame(width: geometry.size.width * 0.35, height: 60)
-                                        .background(Color.white)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                        )
-                                }
-                            }
-                            
-                            // Standard Room section
-                            HStack(alignment: .center) {
-                                Text("Standard Room")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.black.opacity(0.8))
-                                    .lineLimit(2)
-                                    .truncationMode(.tail)
-                                    .multilineTextAlignment(.leading)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        isStandardRoomsCollapsed.toggle()
-                                    }
-                                }) {
-                                    Image(systemName: isStandardRoomsCollapsed ? "chevron.down" : "chevron.right")
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.black.opacity(0.8))
-                                }
-                            }
-                            .padding(.horizontal, 12)
-                            .frame(width: geometry.size.width * 0.35, height: 60)
-                            .background(Color.white)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                            )
-                            
-                            // Standard room name cells
-                            if !isStandardRoomsCollapsed {
-                                ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                    Text(standardRooms[roomIndex])
-                                        .font(.subheadline)
-                                        .frame(width: geometry.size.width * 0.35, height: 60)
-                                        .background(Color.white)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                        )
-                                }
-                            }
-                        }
+                // Calendar navigation - only show in portrait mode
+                if !isLandscape {
+                    HStack {
+                        todayButton()
                         
-                        // Scrollable content for all rows
-                        ScrollView(.horizontal, showsIndicators: false) {
+                        Spacer()
+                        
+                        weekPickerView()
+                        
+                        Spacer()
+                        
+                        navigationButtonsView()
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 16)
+                }
+                
+                // Calendar grid
+                ScrollView {
+                    GeometryReader { geometry in
+                        HStack(spacing: 0) {
+                            // Fixed first column with room names
                             VStack(spacing: 0) {
-                                // Days header row
-                                HStack(spacing: 0) {
-                                    ForEach(0..<7, id: \.self) { index in
-                                        VStack {
-                                            HStack(spacing: 4) {
-                                                Text(daysOfWeek[index])
-                                                    .font(.subheadline)
-                                                    .fontWeight(.semibold)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                                
-                                                Text(dates[index])
-                                                    .font(.subheadline)
-                                                    .fontWeight(.bold)
-                                                    .foregroundColor(.gray.opacity(0.8))
-                                            }
-                                            .padding(.top, 12)
-                                            
-                                            Spacer()
-                                            
-                                            Text(occupancyPercentages[index])
-                                                .font(.caption)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.gray.opacity(0.8))
-                                                .padding(.bottom, 12)
-                                        }
-                                        .frame(width: 80, height: 70)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                                        )
-                                    }
-                                }
+                                Rectangle()
+                                    .fill(Color.clear)
+                                    .frame(width: geometry.size.width * 0.35, height: 70)
                                 
-                                // Summary row for Superior Rooms
-                                HStack(spacing: 0) {
-                                    ForEach(0..<7, id: \.self) { index in
-                                        Text(averageIncomes[index])
-                                            .font(.subheadline)
+                                // Superior Room section
+                                HStack(alignment: .center) {
+                                    Text("Superior Room with Queen bed")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.black.opacity(0.8))
+                                        .lineLimit(2)
+                                        .truncationMode(.tail)
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        withAnimation(.easeInOut(duration: 0.3)) {
+                                            isSuperiorRoomsCollapsed.toggle()
+                                        }
+                                    }) {
+                                        Image(systemName: isSuperiorRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                            .font(.caption)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.black.opacity(0.8))
-                                            .frame(width: 80, height: 60)
-                                            .background(Color.gray.opacity(0.02))
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                                            )
                                     }
                                 }
+                                .padding(.horizontal, 12)
+                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .background(Color.white)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                )
                                 
-                                // Superior Room occupancy rows
+                                // Superior room name cells
                                 if !isSuperiorRoomsCollapsed {
                                     ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                        occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
-                                    }
-                                }
-                                
-                                // Summary row for Standard Rooms
-                                HStack(spacing: 0) {
-                                    ForEach(0..<7, id: \.self) { index in
-                                        Text(averageIncomes[index])
+                                        Text(rooms[roomIndex])
                                             .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.black.opacity(0.8))
-                                            .frame(width: 80, height: 60)
-                                            .background(Color.gray.opacity(0.02))
+                                            .frame(width: geometry.size.width * 0.35, height: 60)
+                                            .background(Color.white)
                                             .overlay(
                                                 Rectangle()
-                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
                                             )
                                     }
                                 }
                                 
-                                // Standard Room occupancy rows
+                                // Standard Room section
+                                HStack(alignment: .center) {
+                                    Text("Standard Room")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.black.opacity(0.8))
+                                        .lineLimit(2)
+                                        .truncationMode(.tail)
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        withAnimation(.easeInOut(duration: 0.3)) {
+                                            isStandardRoomsCollapsed.toggle()
+                                        }
+                                    }) {
+                                        Image(systemName: isStandardRoomsCollapsed ? "chevron.down" : "chevron.right")
+                                            .font(.caption)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.black.opacity(0.8))
+                                    }
+                                }
+                                .padding(.horizontal, 12)
+                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .background(Color.white)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                )
+                                
+                                // Standard room name cells
                                 if !isStandardRoomsCollapsed {
                                     ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                        occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
+                                        Text(standardRooms[roomIndex])
+                                            .font(.subheadline)
+                                            .frame(width: geometry.size.width * 0.35, height: 60)
+                                            .background(Color.white)
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                            )
+                                    }
+                                }
+                            }
+                            
+                            // Scrollable content for all rows
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                VStack(spacing: 0) {
+                                    // Days header row
+                                    HStack(spacing: 0) {
+                                        ForEach(0..<7, id: \.self) { index in
+                                            VStack {
+                                                HStack(spacing: 4) {
+                                                    Text(daysOfWeek[index])
+                                                        .font(.subheadline)
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                    
+                                                    Text(dates[index])
+                                                        .font(.subheadline)
+                                                        .fontWeight(.bold)
+                                                        .foregroundColor(.gray.opacity(0.8))
+                                                }
+                                                .padding(.top, 12)
+                                                
+                                                Spacer()
+                                                
+                                                Text(occupancyPercentages[index])
+                                                    .font(.caption)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.gray.opacity(0.8))
+                                                    .padding(.bottom, 12)
+                                            }
+                                            .frame(width: 80, height: 70)
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                            )
+                                        }
+                                    }
+                                    
+                                    // Summary row for Superior Rooms
+                                    HStack(spacing: 0) {
+                                        ForEach(0..<7, id: \.self) { index in
+                                            Text(averageIncomes[index])
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.black.opacity(0.8))
+                                                .frame(width: 80, height: 60)
+                                                .background(Color.gray.opacity(0.02))
+                                                .overlay(
+                                                    Rectangle()
+                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                )
+                                        }
+                                    }
+                                    
+                                    // Superior Room occupancy rows
+                                    if !isSuperiorRoomsCollapsed {
+                                        ForEach(0..<rooms.count, id: \.self) { roomIndex in
+                                            occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
+                                        }
+                                    }
+                                    
+                                    // Summary row for Standard Rooms
+                                    HStack(spacing: 0) {
+                                        ForEach(0..<7, id: \.self) { index in
+                                            Text(averageIncomes[index])
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.black.opacity(0.8))
+                                                .frame(width: 80, height: 60)
+                                                .background(Color.gray.opacity(0.02))
+                                                .overlay(
+                                                    Rectangle()
+                                                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                                )
+                                        }
+                                    }
+                                    
+                                    // Standard Room occupancy rows
+                                    if !isStandardRoomsCollapsed {
+                                        ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                            occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+            .onAppear {
+                // Set initial orientation
+                checkOrientation(size: geometry.size)
+            }
+            .onChange(of: geometry.size) { newSize in
+                // Update orientation when size changes
+                checkOrientation(size: newSize)
             }
             
             Spacer()
@@ -449,6 +344,156 @@ struct CursorView: View {
                 }
             }
         }
+    }
+    
+    // Helper function to check orientation based on size
+    private func checkOrientation(size: CGSize) {
+        isLandscape = size.width > size.height
+    }
+    
+    // Today button component
+    private func todayButton() -> some View {
+        Button(action: {}) {
+            Text("Today")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.black)
+                .padding(12)
+                .background(Color.white)
+                .cornerRadius(8)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        }
+    }
+    
+    // Week picker component
+    private func weekPickerView() -> some View {
+        ZStack(alignment: .top) {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isWeekPickerVisible.toggle()
+                }
+            }) {
+                HStack {
+                    Text(selectedDateRange)
+                        .font(.subheadline)
+                        .foregroundColor(.black)
+                    
+                    Image(systemName: isWeekPickerVisible ? "chevron.up" : "chevron.down")
+                        .font(.caption)
+                        .foregroundColor(.black)
+                }
+                .padding(12)
+                .background(Color.white)
+                .cornerRadius(8)
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+            }
+            
+            // Dropdown menu
+            if isWeekPickerVisible {
+                VStack(spacing: 0) {
+                    // Spacer to push dropdown below the button
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 50)
+                    
+                    // Week options
+                    VStack(spacing: 0) {
+                        Button(action: {
+                            withAnimation {
+                                currentWeek = 0
+                                isWeekPickerVisible = false
+                            }
+                        }) {
+                            HStack {
+                                Text("Mar 15 - Mar 21")
+                                    .font(.subheadline)
+                                    .foregroundColor(.black)
+                                Spacer()
+                                if currentWeek == 0 {
+                                    Image(systemName: "checkmark")
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(currentWeek == 0 ? Color.gray.opacity(0.1) : Color.white)
+                            .contentShape(Rectangle())
+                        }
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            withAnimation {
+                                currentWeek = 1
+                                isWeekPickerVisible = false
+                            }
+                        }) {
+                            HStack {
+                                Text("Mar 22 - Mar 28")
+                                    .font(.subheadline)
+                                    .foregroundColor(.black)
+                                Spacer()
+                                if currentWeek == 1 {
+                                    Image(systemName: "checkmark")
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(currentWeek == 1 ? Color.gray.opacity(0.1) : Color.white)
+                            .contentShape(Rectangle())
+                        }
+                    }
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+                }
+                .zIndex(1)
+            }
+        }
+        .zIndex(isWeekPickerVisible ? 100 : 1)
+    }
+    
+    // Navigation buttons component
+    private func navigationButtonsView() -> some View {
+        HStack(spacing: 0) {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    if currentWeek > 0 {
+                        currentWeek -= 1
+                    }
+                }
+            }) {
+                Image(systemName: "chevron.left")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.black)
+                    .padding(12)
+            }
+            
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 1, height: 24)
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    if currentWeek < 1 {
+                        currentWeek += 1
+                    }
+                }
+            }) {
+                Image(systemName: "chevron.right")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.black)
+                    .padding(12)
+            }
+        }
+        .background(Color.white)
+        .cornerRadius(8)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
     
     // Extracted occupancy row view
