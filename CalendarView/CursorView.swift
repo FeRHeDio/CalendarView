@@ -9,11 +9,14 @@ import SwiftUI
 import Inject
 
 struct CursorView: View {
+    @ObserveInjection var redraw
+    
     // Sample data
     private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     private let dates = ["15", "16", "17", "18", "19", "20", "21"]
     private let occupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
     private let rooms = ["Room A", "Room B", "Room C", "Room D"]
+    private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
     private let averageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
     
     // Guest data
@@ -23,17 +26,24 @@ struct CursorView: View {
         let room: Int
         let startDate: Int
         let endDate: Int
+        let isStandardRoom: Bool
     }
     
     private let guests = [
-        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 16),  // Pastel green
-        Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18), // Pastel blue
-        Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20), // Pastel violet
-        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21)   // Pastel green (same guest)
+        // Superior rooms
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 20, isStandardRoom: false),  // Pastel green
+        Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18, isStandardRoom: false), // Pastel blue
+        Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20, isStandardRoom: false), // Pastel violet
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21, isStandardRoom: false),   // Pastel green (same guest)
+        
+        // Standard rooms
+        Guest(name: "John Smith", color: Color(red: 0.9, green: 0.8, blue: 0.7), room: 0, startDate: 15, endDate: 17, isStandardRoom: true),  // Pastel orange
+        Guest(name: "Emma Johnson", color: Color(red: 0.9, green: 0.7, blue: 0.8), room: 1, startDate: 18, endDate: 21, isStandardRoom: true), // Pastel pink
+        Guest(name: "Michael Brown", color: Color(red: 0.8, green: 0.9, blue: 0.8), room: 2, startDate: 16, endDate: 19, isStandardRoom: true)  // Light green
     ]
     
     @State private var selectedDateRange = "Mar 15 - Mar 21"
-    @ObserveInjection var redraw
+
     
     var body: some View {
         VStack(spacing: 0) {
@@ -125,7 +135,7 @@ struct CursorView: View {
                                 .fill(Color.clear)
                                 .frame(width: geometry.size.width * 0.35, height: 70)
                             
-                            // Summary cell
+                            // Superior Room section
                             HStack(alignment: .center) {
                                 Text("Superior Room with Queen bed")
                                     .font(.subheadline)
@@ -150,9 +160,46 @@ struct CursorView: View {
                                     .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                             )
                             
-                            // Room name cells
+                            // Superior room name cells
                             ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                 Text(rooms[roomIndex])
+                                    .font(.subheadline)
+                                    .frame(width: geometry.size.width * 0.35, height: 60)
+                                    .background(Color.white)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
+                                    )
+                            }
+                            
+                            // Standard Room section
+                            HStack(alignment: .center) {
+                                Text("Standard Room")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.black.opacity(0.8))
+                                    .lineLimit(2)
+                                    .truncationMode(.tail)
+                                    .multilineTextAlignment(.leading)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.black.opacity(0.8))
+                            }
+                            .padding(.horizontal, 12)
+                            .frame(width: geometry.size.width * 0.35, height: 60)
+                            .background(Color.white)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                            )
+                            
+                            // Standard room name cells
+                            ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                Text(standardRooms[roomIndex])
                                     .font(.subheadline)
                                     .frame(width: geometry.size.width * 0.35, height: 60)
                                     .background(Color.white)
@@ -199,7 +246,7 @@ struct CursorView: View {
                                     }
                                 }
                                 
-                                // Summary row
+                                // Summary row for Superior Rooms
                                 HStack(spacing: 0) {
                                     ForEach(0..<7, id: \.self) { index in
                                         Text(averageIncomes[index])
@@ -215,9 +262,30 @@ struct CursorView: View {
                                     }
                                 }
                                 
-                                // Room occupancy rows
+                                // Superior Room occupancy rows
                                 ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                    occupancyRow(for: roomIndex, geometry: geometry)
+                                    occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
+                                }
+                                
+                                // Summary row for Standard Rooms
+                                HStack(spacing: 0) {
+                                    ForEach(0..<7, id: \.self) { index in
+                                        Text(averageIncomes[index])
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.black.opacity(0.8))
+                                            .frame(width: 80, height: 60)
+                                            .background(Color.gray.opacity(0.02))
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
+                                            )
+                                    }
+                                }
+                                
+                                // Standard Room occupancy rows
+                                ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
+                                    occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
                                 }
                             }
                         }
@@ -227,11 +295,11 @@ struct CursorView: View {
             
             Spacer()
         }
-        .enableInjection()
+        
     }
     
     // Extracted occupancy row view
-    private func occupancyRow(for roomIndex: Int, geometry: GeometryProxy) -> some View {
+    private func occupancyRow(for roomIndex: Int, isStandardRoom: Bool, geometry: GeometryProxy) -> some View {
         HStack(spacing: 0) {
             // First, identify continuous stays for this room
             var stayRanges: [(guest: Guest, startIndex: Int, endIndex: Int)] = []
@@ -240,7 +308,7 @@ struct CursorView: View {
             
             // Find all continuous stays in this row
             for dayIndex in 0..<7 {
-                if let guest = getOccupyingGuest(roomIndex, dayIndex) {
+                if let guest = getOccupyingGuest(roomIndex, dayIndex, isStandardRoom) {
                     if currentGuest == nil || currentGuest?.name != guest.name {
                         // Start of a new stay
                         if currentGuest != nil {
@@ -331,9 +399,10 @@ struct CursorView: View {
     }
     
     // Helper function to determine if a room is occupied and by whom
-    private func getOccupyingGuest(_ room: Int, _ day: Int) -> Guest? {
+    private func getOccupyingGuest(_ room: Int, _ day: Int, _ isStandardRoom: Bool) -> Guest? {
         let currentDate = Int(dates[day]) ?? 0
         return guests.first(where: { $0.room == room && 
+            $0.isStandardRoom == isStandardRoom &&
             currentDate >= $0.startDate && 
             currentDate <= $0.endDate })
     }
