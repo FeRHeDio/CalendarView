@@ -6,9 +6,8 @@
 //
 
 import SwiftUI
-import Inject
 
-struct CursorView: View {
+struct CalendarView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
@@ -18,7 +17,7 @@ struct CursorView: View {
     @State private var isSuperiorRoomsCollapsed = false
     @State private var isStandardRoomsCollapsed = false
     
-        // MARK: Static data
+    // MARK: Static data
     private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     private let week1Dates = ["15", "16", "17", "18", "19", "20", "21"]
     private let week1OccupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
@@ -30,7 +29,7 @@ struct CursorView: View {
     private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
     
     
-        // MARK: Computed Properties
+    // MARK: Computed Properties
     private var dates: [String] {
         currentWeek == 0 ? week1Dates : week2Dates
     }
@@ -361,7 +360,7 @@ struct CursorView: View {
 }
 
 // MARK: - Extension for helpers
-extension CursorView {
+extension CalendarView {
     // Helper function to get fixed column width based on orientation
     private func getFixedColumnWidth(_ geometry: GeometryProxy) -> CGFloat {
         let baseWidth = geometry.size.width * 0.35
@@ -730,6 +729,6 @@ extension CursorView {
 }
 
 #Preview {
-    CursorView()
+    CalendarView()
 }
 
