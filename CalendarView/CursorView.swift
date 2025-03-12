@@ -9,34 +9,28 @@ import SwiftUI
 import Inject
 
 struct CursorView: View {
-    @ObserveInjection var redraw
-    
-    // Sample data
-    private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    
-    // Week 1 data (Mar 15-21)
-    private let week1Dates = ["15", "16", "17", "18", "19", "20", "21"]
-    private let week1OccupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
-    private let week1AverageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
-    
-    // Week 2 data (Mar 22-28)
-    private let week2Dates = ["22", "23", "24", "25", "26", "27", "28"]
-    private let week2OccupancyPercentages = ["70%", "75%", "85%", "90%", "80%", "65%", "60%"]
-    private let week2AverageIncomes = ["$110", "$130", "$145", "$170", "$150", "$120", "$105"]
-    
-    private let rooms = ["SUPQA101", "SUPQA102", "SUPQA103", "SUPQA104"]
-    private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
-    
-    // Current week selection
-    @State private var currentWeek = 0 // 0 = week1, 1 = week2
-    @State private var isWeekPickerVisible = false
-    @State private var isLandscape = false
-    
-    // Add environment values to detect orientation
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
-    // Computed properties for current week data
+    @State private var currentWeek = 0 // 0 = week1, 1 = week2
+    @State private var isWeekPickerVisible = false
+    @State private var isLandscape = false
+    @State private var isSuperiorRoomsCollapsed = false
+    @State private var isStandardRoomsCollapsed = false
+    
+    // MARK: Static data
+    private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    private let week1Dates = ["15", "16", "17", "18", "19", "20", "21"]
+    private let week1OccupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
+    private let week1AverageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
+    private let week2Dates = ["22", "23", "24", "25", "26", "27", "28"]
+    private let week2OccupancyPercentages = ["70%", "75%", "85%", "90%", "80%", "65%", "60%"]
+    private let week2AverageIncomes = ["$110", "$130", "$145", "$170", "$150", "$120", "$105"]
+    private let rooms = ["SUPQA101", "SUPQA102", "SUPQA103", "SUPQA104"]
+    private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
+    
+    
+    // MARK: Computed Properties
     private var dates: [String] {
         currentWeek == 0 ? week1Dates : week2Dates
     }
@@ -52,9 +46,6 @@ struct CursorView: View {
     private var selectedDateRange: String {
         currentWeek == 0 ? "Mar 15 - Mar 21" : "Mar 22 - Mar 28"
     }
-    
-    @State private var isSuperiorRoomsCollapsed = false
-    @State private var isStandardRoomsCollapsed = false
     
     var body: some View {
         GeometryReader { geometry in
