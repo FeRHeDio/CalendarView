@@ -140,13 +140,13 @@ struct CursorView: View {
                 
                 // Calendar grid
                 ScrollView {
-                    GeometryReader { geometry in
+                    GeometryReader { gridGeometry in
                         HStack(spacing: 0) {
                             // Fixed first column with room names
                             VStack(spacing: 0) {
                                 Rectangle()
                                     .fill(Color.clear)
-                                    .frame(width: geometry.size.width * 0.35, height: 70)
+                                    .frame(width: getFixedColumnWidth(gridGeometry), height: 70)
                                 
                                 // Superior Room section
                                 HStack(alignment: .center) {
@@ -172,7 +172,7 @@ struct CursorView: View {
                                     }
                                 }
                                 .padding(.horizontal, 12)
-                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
                                 .background(Color.white)
                                 .overlay(
                                     Rectangle()
@@ -184,7 +184,7 @@ struct CursorView: View {
                                     ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                         Text(rooms[roomIndex])
                                             .font(.subheadline)
-                                            .frame(width: geometry.size.width * 0.35, height: 60)
+                                            .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
                                             .background(Color.white)
                                             .overlay(
                                                 Rectangle()
@@ -217,7 +217,7 @@ struct CursorView: View {
                                     }
                                 }
                                 .padding(.horizontal, 12)
-                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
                                 .background(Color.white)
                                 .overlay(
                                     Rectangle()
@@ -229,7 +229,7 @@ struct CursorView: View {
                                     ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
                                         Text(standardRooms[roomIndex])
                                             .font(.subheadline)
-                                            .frame(width: geometry.size.width * 0.35, height: 60)
+                                            .frame(width: getFixedColumnWidth(gridGeometry), height: 60)
                                             .background(Color.white)
                                             .overlay(
                                                 Rectangle()
@@ -267,7 +267,7 @@ struct CursorView: View {
                                                     .foregroundColor(.gray.opacity(0.8))
                                                     .padding(.bottom, 12)
                                             }
-                                            .frame(width: 80, height: 70)
+                                            .frame(width: getDayColumnWidth(), height: 70)
                                             .overlay(
                                                 Rectangle()
                                                     .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
@@ -282,7 +282,7 @@ struct CursorView: View {
                                                 .font(.subheadline)
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(.black.opacity(0.8))
-                                                .frame(width: 80, height: 60)
+                                                .frame(width: getDayColumnWidth(), height: 60)
                                                 .background(Color.gray.opacity(0.02))
                                                 .overlay(
                                                     Rectangle()
@@ -294,7 +294,7 @@ struct CursorView: View {
                                     // Superior Room occupancy rows
                                     if !isSuperiorRoomsCollapsed {
                                         ForEach(0..<rooms.count, id: \.self) { roomIndex in
-                                            occupancyRow(for: roomIndex, isStandardRoom: false, geometry: geometry)
+                                            occupancyRow(for: roomIndex, isStandardRoom: false, geometry: gridGeometry)
                                         }
                                     }
                                     
@@ -305,7 +305,7 @@ struct CursorView: View {
                                                 .font(.subheadline)
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(.black.opacity(0.8))
-                                                .frame(width: 80, height: 60)
+                                                .frame(width: getDayColumnWidth(), height: 60)
                                                 .background(Color.gray.opacity(0.02))
                                                 .overlay(
                                                     Rectangle()
@@ -317,11 +317,13 @@ struct CursorView: View {
                                     // Standard Room occupancy rows
                                     if !isStandardRoomsCollapsed {
                                         ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
-                                            occupancyRow(for: roomIndex, isStandardRoom: true, geometry: geometry)
+                                            occupancyRow(for: roomIndex, isStandardRoom: true, geometry: gridGeometry)
                                         }
                                     }
                                 }
                             }
+                            .scrollTargetLayout()
+                            .scrollTargetBehavior(.viewAligned)
                         }
                     }
                 }
@@ -337,6 +339,7 @@ struct CursorView: View {
             
             Spacer()
         }
+        .edgesIgnoringSafeArea(isLandscape ? .horizontal : [])
         .onTapGesture {
             if isWeekPickerVisible {
                 withAnimation {
@@ -344,6 +347,17 @@ struct CursorView: View {
                 }
             }
         }
+    }
+    
+    // Helper function to get fixed column width based on orientation
+    private func getFixedColumnWidth(_ geometry: GeometryProxy) -> CGFloat {
+        let baseWidth = geometry.size.width * 0.35
+        return isLandscape ? baseWidth * 0.7 : baseWidth // 30% narrower in landscape
+    }
+    
+    // Helper function to get day column width
+    private func getDayColumnWidth() -> CGFloat {
+        return 80 // Fixed width for day columns
     }
     
     // Helper function to check orientation based on size
@@ -535,7 +549,7 @@ struct CursorView: View {
                     ForEach(0..<7, id: \.self) { dayIndex in
                         Rectangle()
                             .fill(Color.white)
-                            .frame(width: 80, height: 60)
+                            .frame(width: getDayColumnWidth(), height: 60)
                             .overlay(
                                 Rectangle()
                                     .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
@@ -546,8 +560,8 @@ struct CursorView: View {
                 // Shaped occupancy containers
                 ForEach(stayRanges.indices, id: \.self) { index in
                     let stay = stayRanges[index]
-                    let stayWidth = CGFloat(stay.endIndex - stay.startIndex + 1) * 80
-                    let stayOffset = CGFloat(stay.startIndex) * 80
+                    let stayWidth = CGFloat(stay.endIndex - stay.startIndex + 1) * getDayColumnWidth()
+                    let stayOffset = CGFloat(stay.startIndex) * getDayColumnWidth()
                     
                     RoundedRectangle(cornerRadius: 8)
                         .fill(stay.guest.color)
