@@ -24,7 +24,7 @@ struct CursorView: View {
     private let week2OccupancyPercentages = ["70%", "75%", "85%", "90%", "80%", "65%", "60%"]
     private let week2AverageIncomes = ["$110", "$130", "$145", "$170", "$150", "$120", "$105"]
     
-    private let rooms = ["Room A", "Room B", "Room C", "Room D"]
+    private let rooms = ["SUPQA101", "SUPQA102", "SUPQA103", "SUPQA104"]
     private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
     
     // Current week selection
