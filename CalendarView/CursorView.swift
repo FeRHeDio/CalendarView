@@ -13,11 +13,39 @@ struct CursorView: View {
     
     // Sample data
     private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    private let dates = ["15", "16", "17", "18", "19", "20", "21"]
-    private let occupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
+    
+    // Week 1 data (Mar 15-21)
+    private let week1Dates = ["15", "16", "17", "18", "19", "20", "21"]
+    private let week1OccupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
+    private let week1AverageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
+    
+    // Week 2 data (Mar 22-28)
+    private let week2Dates = ["22", "23", "24", "25", "26", "27", "28"]
+    private let week2OccupancyPercentages = ["70%", "75%", "85%", "90%", "80%", "65%", "60%"]
+    private let week2AverageIncomes = ["$110", "$130", "$145", "$170", "$150", "$120", "$105"]
+    
     private let rooms = ["Room A", "Room B", "Room C", "Room D"]
     private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
-    private let averageIncomes = ["$120", "$150", "$110", "$130", "$160", "$140", "$125"]
+    
+    // Current week selection
+    @State private var currentWeek = 0 // 0 = week1, 1 = week2
+    
+    // Computed properties for current week data
+    private var dates: [String] {
+        currentWeek == 0 ? week1Dates : week2Dates
+    }
+    
+    private var occupancyPercentages: [String] {
+        currentWeek == 0 ? week1OccupancyPercentages : week2OccupancyPercentages
+    }
+    
+    private var averageIncomes: [String] {
+        currentWeek == 0 ? week1AverageIncomes : week2AverageIncomes
+    }
+    
+    private var selectedDateRange: String {
+        currentWeek == 0 ? "Mar 15 - Mar 21" : "Mar 22 - Mar 28"
+    }
     
     // Guest data
     private struct Guest {
@@ -27,22 +55,33 @@ struct CursorView: View {
         let startDate: Int
         let endDate: Int
         let isStandardRoom: Bool
+        let week: Int // 0 = week1, 1 = week2
     }
     
     private let guests = [
-        // Superior rooms
-        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 20, isStandardRoom: false),  // Pastel green
-        Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18, isStandardRoom: false), // Pastel blue
-        Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20, isStandardRoom: false), // Pastel violet
-        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21, isStandardRoom: false),   // Pastel green (same guest)
+        // Week 1 - Superior rooms
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 0, startDate: 15, endDate: 20, isStandardRoom: false, week: 0),  // Pastel green
+        Guest(name: "Kristin Watson", color: Color(red: 0.7, green: 0.8, blue: 0.9), room: 1, startDate: 16, endDate: 18, isStandardRoom: false, week: 0), // Pastel blue
+        Guest(name: "Albert Flores", color: Color(red: 0.85, green: 0.8, blue: 0.9), room: 2, startDate: 15, endDate: 20, isStandardRoom: false, week: 0), // Pastel violet
+        Guest(name: "Bessie Cooper", color: Color(red: 0.7, green: 0.9, blue: 0.7), room: 3, startDate: 20, endDate: 21, isStandardRoom: false, week: 0),   // Pastel green (same guest)
         
-        // Standard rooms
-        Guest(name: "John Smith", color: Color(red: 0.9, green: 0.8, blue: 0.7), room: 0, startDate: 15, endDate: 17, isStandardRoom: true),  // Pastel orange
-        Guest(name: "Emma Johnson", color: Color(red: 0.9, green: 0.7, blue: 0.8), room: 1, startDate: 18, endDate: 21, isStandardRoom: true), // Pastel pink
-        Guest(name: "Michael Brown", color: Color(red: 0.8, green: 0.9, blue: 0.8), room: 2, startDate: 16, endDate: 19, isStandardRoom: true)  // Light green
+        // Week 1 - Standard rooms
+        Guest(name: "John Smith", color: Color(red: 0.9, green: 0.8, blue: 0.7), room: 0, startDate: 15, endDate: 17, isStandardRoom: true, week: 0),  // Pastel orange
+        Guest(name: "Emma Johnson", color: Color(red: 0.9, green: 0.7, blue: 0.8), room: 1, startDate: 18, endDate: 21, isStandardRoom: true, week: 0), // Pastel pink
+        Guest(name: "Michael Brown", color: Color(red: 0.8, green: 0.9, blue: 0.8), room: 2, startDate: 16, endDate: 19, isStandardRoom: true, week: 0),  // Light green
+        
+        // Week 2 - Superior rooms
+        Guest(name: "Robert Davis", color: Color(red: 0.8, green: 0.7, blue: 0.9), room: 0, startDate: 22, endDate: 25, isStandardRoom: false, week: 1),  // Pastel purple
+        Guest(name: "Sarah Miller", color: Color(red: 0.9, green: 0.9, blue: 0.7), room: 1, startDate: 23, endDate: 28, isStandardRoom: false, week: 1), // Pastel yellow
+        Guest(name: "James Wilson", color: Color(red: 0.7, green: 0.9, blue: 0.9), room: 2, startDate: 24, endDate: 27, isStandardRoom: false, week: 1), // Pastel cyan
+        Guest(name: "Jennifer Lee", color: Color(red: 0.9, green: 0.8, blue: 0.8), room: 3, startDate: 22, endDate: 24, isStandardRoom: false, week: 1),  // Pastel pink
+        
+        // Week 2 - Standard rooms
+        Guest(name: "David Taylor", color: Color(red: 0.8, green: 0.8, blue: 0.7), room: 0, startDate: 25, endDate: 28, isStandardRoom: true, week: 1),  // Pastel tan
+        Guest(name: "Lisa Anderson", color: Color(red: 0.7, green: 0.8, blue: 0.7), room: 1, startDate: 22, endDate: 24, isStandardRoom: true, week: 1), // Pastel mint
+        Guest(name: "Thomas White", color: Color(red: 0.9, green: 0.7, blue: 0.7), room: 2, startDate: 23, endDate: 26, isStandardRoom: true, week: 1)   // Pastel salmon
     ]
     
-    @State private var selectedDateRange = "Mar 15 - Mar 21"
     @State private var isSuperiorRoomsCollapsed = false
     @State private var isStandardRoomsCollapsed = false
 
@@ -100,7 +139,13 @@ struct CursorView: View {
                 
                 // Navigation buttons group
                 HStack(spacing: 0) {
-                    Button(action: {}) {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            if currentWeek > 0 {
+                                currentWeek -= 1
+                            }
+                        }
+                    }) {
                         Image(systemName: "chevron.left")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -112,7 +157,13 @@ struct CursorView: View {
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 1, height: 24)
                     
-                    Button(action: {}) {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            if currentWeek < 1 {
+                                currentWeek += 1
+                            }
+                        }
+                    }) {
                         Image(systemName: "chevron.right")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -425,6 +476,7 @@ struct CursorView: View {
         let currentDate = Int(dates[day]) ?? 0
         return guests.first(where: { $0.room == room && 
             $0.isStandardRoom == isStandardRoom &&
+            $0.week == currentWeek &&
             currentDate >= $0.startDate && 
             currentDate <= $0.endDate })
     }
