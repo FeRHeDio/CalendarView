@@ -18,7 +18,7 @@ struct CursorView: View {
     @State private var isSuperiorRoomsCollapsed = false
     @State private var isStandardRoomsCollapsed = false
     
-    // MARK: Static data
+        // MARK: Static data
     private let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     private let week1Dates = ["15", "16", "17", "18", "19", "20", "21"]
     private let week1OccupancyPercentages = ["85%", "90%", "75%", "80%", "95%", "70%", "65%"]
@@ -30,7 +30,7 @@ struct CursorView: View {
     private let standardRooms = ["STDQA101", "STDQA102", "STDQA103"]
     
     
-    // MARK: Computed Properties
+        // MARK: Computed Properties
     private var dates: [String] {
         currentWeek == 0 ? week1Dates : week2Dates
     }
@@ -50,13 +50,13 @@ struct CursorView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
-                // Header component
+                    // Header component
                 headerView()
                     .padding(.horizontal)
                     .padding(.top, 8)
                     .padding(.bottom, 16)
                 
-                // Calendar title and navigation (conditional based on orientation)
+                    // Calendar title and navigation (conditional based on orientation)
                 HStack(alignment: .center) {
                     Text("Calendar")
                         .font(.title)
@@ -64,7 +64,7 @@ struct CursorView: View {
                     
                     Spacer()
                     
-                    // Only show navigation controls in the title row when in landscape
+                        // Only show navigation controls in the title row when in landscape
                     if isLandscape {
                         HStack(spacing: 16) {
                             todayButton()
@@ -76,7 +76,7 @@ struct CursorView: View {
                 .padding(.horizontal)
                 .padding(.bottom, 16)
                 
-                // Calendar navigation - only show in portrait mode
+                    // Calendar navigation - only show in portrait mode
                 if !isLandscape {
                     HStack {
                         todayButton()
@@ -93,19 +93,19 @@ struct CursorView: View {
                     .padding(.bottom, 16)
                 }
                 
-                // Calendar grid
+                    // Calendar grid
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         GeometryReader { gridGeometry in
                             HStack(spacing: 0) {
-                                // Fixed first column with room names
+                                    // Fixed first column with room names
                                 VStack(spacing: 0) {
-                                    // Header placeholder (for days row)
+                                        // Header placeholder (for days row)
                                     Rectangle()
                                         .fill(Color.clear)
                                         .frame(width: getFixedColumnWidth(gridGeometry), height: 70)
                                     
-                                    // Superior Room summary placeholder
+                                        // Superior Room summary placeholder
                                     Text("Superior Room")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
@@ -117,7 +117,7 @@ struct CursorView: View {
                                                 .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                         )
                                     
-                                    // Superior Room section
+                                        // Superior Room section
                                     HStack(alignment: .center) {
                                         Text("Superior Room with Queen bed")
                                             .font(.subheadline)
@@ -148,7 +148,7 @@ struct CursorView: View {
                                             .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                     )
                                     
-                                    // Superior room name cells
+                                        // Superior room name cells
                                     if !isSuperiorRoomsCollapsed {
                                         ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                             Text(rooms[roomIndex])
@@ -162,7 +162,7 @@ struct CursorView: View {
                                         }
                                     }
                                     
-                                    // Standard Room summary placeholder
+                                        // Standard Room summary placeholder
                                     Text("Standard Room")
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
@@ -174,7 +174,7 @@ struct CursorView: View {
                                                 .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                         )
                                     
-                                    // Standard Room section
+                                        // Standard Room section
                                     HStack(alignment: .center) {
                                         Text("Standard Room")
                                             .font(.subheadline)
@@ -205,7 +205,7 @@ struct CursorView: View {
                                             .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
                                     )
                                     
-                                    // Standard room name cells
+                                        // Standard room name cells
                                     if !isStandardRoomsCollapsed {
                                         ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
                                             Text(standardRooms[roomIndex])
@@ -220,10 +220,10 @@ struct CursorView: View {
                                     }
                                 }
                                 
-                                // Scrollable content for all rows
+                                    // Scrollable content for all rows
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     VStack(spacing: 0) {
-                                        // Days header row
+                                            // Days header row
                                         HStack(spacing: 0) {
                                             ForEach(0..<7, id: \.self) { index in
                                                 VStack(spacing: 0) {
@@ -256,7 +256,7 @@ struct CursorView: View {
                                             }
                                         }
                                         
-                                        // Summary row for Superior Rooms
+                                            // Summary row for Superior Rooms
                                         HStack(spacing: 0) {
                                             ForEach(0..<7, id: \.self) { index in
                                                 Text(averageIncomes[index])
@@ -272,7 +272,7 @@ struct CursorView: View {
                                             }
                                         }
                                         
-                                        // Empty row for Superior Room section header
+                                            // Empty row for Superior Room section header
                                         HStack(spacing: 0) {
                                             ForEach(0..<7, id: \.self) { _ in
                                                 Rectangle()
@@ -285,14 +285,14 @@ struct CursorView: View {
                                             }
                                         }
                                         
-                                        // Superior Room occupancy rows
+                                            // Superior Room occupancy rows
                                         if !isSuperiorRoomsCollapsed {
                                             ForEach(0..<rooms.count, id: \.self) { roomIndex in
                                                 occupancyRow(for: roomIndex, isStandardRoom: false, geometry: gridGeometry)
                                             }
                                         }
                                         
-                                        // Summary row for Standard Rooms
+                                            // Summary row for Standard Rooms
                                         HStack(spacing: 0) {
                                             ForEach(0..<7, id: \.self) { index in
                                                 Text(averageIncomes[index])
@@ -308,7 +308,7 @@ struct CursorView: View {
                                             }
                                         }
                                         
-                                        // Empty row for Standard Room section header
+                                            // Empty row for Standard Room section header
                                         HStack(spacing: 0) {
                                             ForEach(0..<7, id: \.self) { _ in
                                                 Rectangle()
@@ -321,7 +321,7 @@ struct CursorView: View {
                                             }
                                         }
                                         
-                                        // Standard Room occupancy rows
+                                            // Standard Room occupancy rows
                                         if !isStandardRoomsCollapsed {
                                             ForEach(0..<standardRooms.count, id: \.self) { roomIndex in
                                                 occupancyRow(for: roomIndex, isStandardRoom: true, geometry: gridGeometry)
@@ -339,11 +339,11 @@ struct CursorView: View {
                 }
             }
             .onAppear {
-                // Set initial orientation
+                    // Set initial orientation
                 checkOrientation(size: geometry.size)
             }
             .onChange(of: geometry.size) { _, newSize in
-                // Update orientation when size changes
+                    // Update orientation when size changes
                 checkOrientation(size: newSize)
             }
             
@@ -358,7 +358,10 @@ struct CursorView: View {
             }
         }
     }
-    
+}
+
+// MARK: - Extension for helpers
+extension CursorView {
     // Helper function to get fixed column width based on orientation
     private func getFixedColumnWidth(_ geometry: GeometryProxy) -> CGFloat {
         let baseWidth = geometry.size.width * 0.35
