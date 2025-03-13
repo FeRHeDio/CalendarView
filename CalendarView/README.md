@@ -1,6 +1,6 @@
-# CalendarView - MVVM Architecture
+# CalendarView - MVVM Architecture with SOLID Principles
 
-This project implements a calendar view for a hotel booking system using the MVVM (Model-View-ViewModel) architecture pattern in SwiftUI.
+This project implements a calendar view for a hotel booking system using the MVVM (Model-View-ViewModel) architecture pattern in SwiftUI, with a focus on SOLID principles.
 
 ## Architecture Overview
 
@@ -8,11 +8,106 @@ This project implements a calendar view for a hotel booking system using the MVV
 - `Guest`: Represents a guest staying at the hotel, including their name, room, stay dates, and room type.
 
 ### ViewModel
-- `CalendarViewModel`: Contains all the business logic and state management for the calendar view.
+- `CalendarViewModel`: Contains all the business logic and state management for the calendar view using the modern `@Observable` macro.
 - `CalendarViewUIHelpers`: Extension to the ViewModel that provides UI-specific helper methods and configurations.
 
-### View
-- `CalendarView`: The main view that renders the calendar UI based on the ViewModel's state.
+### View Components
+The view layer is broken down into small, focused components following the Single Responsibility Principle:
+
+- `CalendarView`: The main container view that orchestrates all components.
+- `HeaderView`: Displays the app header with logo, title, and action buttons.
+- `CalendarTitleView`: Shows the calendar title and conditionally displays controls based on orientation.
+- `CalendarControlsView`: Container for all calendar navigation controls.
+- `CalendarGridView`: Main calendar grid component.
+
+## Modern SwiftUI Features
+
+This project uses the latest SwiftUI features introduced in iOS 17:
+
+1. **@Observable Macro**: Replaces the older ObservableObject protocol for more efficient state management.
+2. **@Bindable Property Wrapper**: Used in views that need to modify the ViewModel's state.
+3. **No Property Wrapper**: Used in views that only read from the ViewModel without modifying it.
+
+## SOLID Principles Applied
+
+1. **Single Responsibility Principle (SRP)**
+   - Each component has a single responsibility
+   - `HeaderView` only handles the header display
+   - `CalendarControlsView` only manages navigation controls
+   - `CalendarGridView` only handles the calendar grid display
+
+2. **Open/Closed Principle (OCP)**
+   - Components are open for extension but closed for modification
+   - New room types can be added without modifying existing code
+   - UI components can be styled differently without changing their structure
+
+3. **Liskov Substitution Principle (LSP)**
+   - Subcomponents can be replaced with alternative implementations
+   - Different room section views follow the same interface
+
+4. **Interface Segregation Principle (ISP)**
+   - Components expose only what they need
+   - Small, focused interfaces for each component
+   - Props are passed only to components that need them
+
+5. **Dependency Inversion Principle (DIP)**
+   - High-level components don't depend on low-level components
+   - Both depend on abstractions
+   - ViewModel is injected into views
+
+## Component Hierarchy
+
+```
+CalendarView
+├── HeaderView
+│   ├── LogoView
+│   ├── TitleView
+│   ├── SearchButton
+│   └── AddButton
+├── CalendarTitleView
+│   └── CalendarControlsView
+│       ├── TodayButton
+│       ├── WeekPickerView
+│       │   ├── WeekPickerButton
+│       │   └── WeekPickerDropdown
+│       │       └── WeekPickerOption
+│       └── NavigationButtonsView
+└── CalendarGridView
+    ├── RoomLabelsColumn
+    │   └── RoomSectionLabels
+    └── CalendarContentView
+        ├── DaysHeaderRow
+        └── RoomSectionContent
+            ├── SummaryRow
+            ├── EmptyHeaderRow
+            └── OccupancyRow
+                └── GuestStayView
+```
+
+## Benefits of This Architecture
+
+1. **Maintainability**: Each component is small and focused, making it easier to understand and modify.
+2. **Testability**: Components can be tested in isolation.
+3. **Reusability**: Components can be reused in different contexts.
+4. **Scalability**: New features can be added by creating new components without modifying existing ones.
+5. **Readability**: Code is organized in a logical, hierarchical structure.
+6. **Performance**: The `@Observable` macro provides more efficient state updates than the older ObservableObject approach.
+
+## Implementation Details
+
+### UI Helper Methods
+
+The `CalendarViewUIHelpers` extension provides methods that generate UI configurations:
+
+- `handleTodayButtonTap()`: Handles the Today button action
+- `getWeekPickerOptions()`: Returns configuration for week picker dropdown options
+- `getOccupancyRowConfiguration()`: Returns configuration for occupancy rows
+
+### Responsive Design
+
+The layout adapts to both portrait and landscape orientations:
+- In landscape mode, controls are displayed in the same row as the title
+- In portrait mode, controls are displayed in a separate row below the title
 
 ## Key Features
 
@@ -21,16 +116,12 @@ This project implements a calendar view for a hotel booking system using the MVV
    - The ViewModel handles all business logic and state management
    - The Model represents the data structure
 
-2. **Responsive Design**
-   - Adapts to both portrait and landscape orientations
-   - Optimizes layout based on available screen space
-
-3. **Interactive Elements**
+2. **Interactive Elements**
    - Week picker dropdown
    - Collapsible room sections
    - Navigation between weeks
 
-4. **Reusable Components**
+3. **Reusable Components**
    - Button styles are applied consistently throughout the app
    - UI configurations are generated by the ViewModel
 
