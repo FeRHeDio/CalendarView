@@ -106,7 +106,7 @@ struct RoomSectionLabels: View {
                         toggleAction()
                     }
                 }) {
-                    Image(systemName: isCollapsed ? "chevron.down" : "chevron.right")
+                    Image(systemName: isCollapsed ? "chevron.right" : "chevron.down")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(.black.opacity(0.8))
