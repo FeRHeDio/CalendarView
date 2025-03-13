@@ -44,11 +44,15 @@ struct RoomLabelsColumn: View {
                 .fill(Color.clear)
                 .frame(width: viewModel.getFixedColumnWidth(geometry), height: 70)
             
+            // Summary row placeholder (for Superior Room price summary)
+            Rectangle()
+                .fill(Color.clear)
+                .frame(width: viewModel.getFixedColumnWidth(geometry), height: 60)
+            
             // Superior Room section
             RoomSectionLabels(
                 viewModel: viewModel,
                 geometry: geometry,
-                sectionTitle: "Superior Room",
                 roomTypeTitle: "Superior Room with Queen bed",
                 isCollapsed: viewModel.isSuperiorRoomsCollapsed,
                 rooms: viewModel.rooms,
@@ -59,21 +63,25 @@ struct RoomLabelsColumn: View {
             RoomSectionLabels(
                 viewModel: viewModel,
                 geometry: geometry,
-                sectionTitle: "Standard Room",
                 roomTypeTitle: "Standard Room",
                 isCollapsed: viewModel.isStandardRoomsCollapsed,
                 rooms: viewModel.standardRooms,
                 toggleAction: viewModel.toggleStandardRoomsCollapsed
             )
+            
+            // Summary row placeholder (for Standard Room price summary)
+            Rectangle()
+                .fill(Color.clear)
+                .frame(width: viewModel.getFixedColumnWidth(geometry), height: 60)
         }
     }
 }
 
 /// Labels for a room section (Superior or Standard)
+/// This component displays the room type title with a toggle button and the room names when expanded
 struct RoomSectionLabels: View {
     @Bindable var viewModel: CalendarViewModel
     let geometry: GeometryProxy
-    let sectionTitle: String
     let roomTypeTitle: String
     let isCollapsed: Bool
     let rooms: [String]
@@ -81,18 +89,6 @@ struct RoomSectionLabels: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Section summary placeholder
-            Text(sectionTitle)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.black.opacity(0.8))
-                .frame(width: viewModel.getFixedColumnWidth(geometry), height: 60)
-                .background(Color.gray.opacity(0.02))
-                .overlay(
-                    Rectangle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
-                )
-            
             // Section header with toggle
             HStack(alignment: .center) {
                 Text(roomTypeTitle)
@@ -118,7 +114,7 @@ struct RoomSectionLabels: View {
             }
             .padding(.horizontal, 12)
             .frame(width: viewModel.getFixedColumnWidth(geometry), height: 60)
-            .background(Color.white)
+            .background(Color.gray.opacity(0.02))
             .overlay(
                 Rectangle()
                     .stroke(Color.gray.opacity(0.2), lineWidth: 0.5)
@@ -218,6 +214,7 @@ struct DaysHeaderRow: View {
 }
 
 /// Content for a room section (Superior or Standard)
+/// Displays a summary row at the top and occupancy rows for each room when not collapsed
 struct RoomSectionContent: View {
     @Bindable var viewModel: CalendarViewModel
     let geometry: GeometryProxy
@@ -226,12 +223,9 @@ struct RoomSectionContent: View {
     let isStandardRoom: Bool
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 0) { // Zero spacing to ensure no gaps between rows
             // Summary row
             SummaryRow(viewModel: viewModel)
-            
-            // Empty row for section header
-            EmptyHeaderRow(viewModel: viewModel)
             
             // Room occupancy rows
             if !isCollapsed {
@@ -349,7 +343,13 @@ struct GuestStayView: View {
 }
 
 #Preview {
-    CalendarGridView(viewModel: CalendarViewModel())
-        .frame(height: 600)
-        .padding()
+    VStack {
+        Text("Calendar Grid Preview")
+            .font(.headline)
+            .padding(.bottom, 8)
+        
+        CalendarGridView(viewModel: CalendarViewModel())
+            .frame(height: 600)
+    }
+    .padding()
 } 

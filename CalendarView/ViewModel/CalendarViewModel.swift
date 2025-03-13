@@ -96,16 +96,14 @@ class CalendarViewModel {
         var totalHeight = headerHeight // Days header row
         
         // Superior Room section
-        totalHeight += summaryRowHeight // Superior Room summary placeholder
-        totalHeight += sectionHeaderHeight // Superior Room section header
+        totalHeight += summaryRowHeight // Superior Room summary row
         
         if !isSuperiorRoomsCollapsed {
             totalHeight += roomCellHeight * CGFloat(rooms.count) // Superior room cells
         }
         
         // Standard Room section
-        totalHeight += summaryRowHeight // Standard Room summary placeholder
-        totalHeight += sectionHeaderHeight // Standard Room section header
+        totalHeight += summaryRowHeight // Standard Room summary row
         
         if !isStandardRoomsCollapsed {
             totalHeight += roomCellHeight * CGFloat(standardRooms.count) // Standard room cells
