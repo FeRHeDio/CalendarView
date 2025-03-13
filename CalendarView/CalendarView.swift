@@ -330,7 +330,9 @@ struct CalendarView: View {
 extension CalendarView {
     // Today button component
     private func todayButton() -> some View {
-        Button(action: {}) {
+        Button(action: {
+            viewModel.handleTodayButtonTap()
+        }) {
             Text("Today")
         }
         .applyActionButtonStyle()
@@ -364,50 +366,34 @@ extension CalendarView {
                     
                     // Week options
                     VStack(spacing: 0) {
-                        Button(action: {
-                            withAnimation {
-                                viewModel.selectWeek(0)
-                            }
-                        }) {
-                            HStack {
-                                Text("Mar 15 - Mar 21")
-                                    .font(.subheadline)
-                                    .foregroundColor(.black)
-                                Spacer()
-                                if viewModel.currentWeek == 0 {
-                                    Image(systemName: "checkmark")
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
+                        ForEach(viewModel.getWeekPickerOptions().indices, id: \.self) { index in
+                            let option = viewModel.getWeekPickerOptions()[index]
+                            
+                            Button(action: {
+                                withAnimation {
+                                    viewModel.selectWeek(index)
                                 }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(viewModel.currentWeek == 0 ? Color.gray.opacity(0.1) : Color.white)
-                            .contentShape(Rectangle())
-                        }
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            withAnimation {
-                                viewModel.selectWeek(1)
-                            }
-                        }) {
-                            HStack {
-                                Text("Mar 22 - Mar 28")
-                                    .font(.subheadline)
-                                    .foregroundColor(.black)
-                                Spacer()
-                                if viewModel.currentWeek == 1 {
-                                    Image(systemName: "checkmark")
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
+                            }) {
+                                HStack {
+                                    Text(option.label)
+                                        .font(.subheadline)
+                                        .foregroundColor(.black)
+                                    Spacer()
+                                    if option.isSelected {
+                                        Image(systemName: "checkmark")
+                                            .font(.caption)
+                                            .foregroundColor(.blue)
+                                    }
                                 }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .background(option.isSelected ? Color.gray.opacity(0.1) : Color.white)
+                                .contentShape(Rectangle())
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(viewModel.currentWeek == 1 ? Color.gray.opacity(0.1) : Color.white)
-                            .contentShape(Rectangle())
+                            
+                            if index < viewModel.getWeekPickerOptions().count - 1 {
+                                Divider()
+                            }
                         }
                     }
                     .background(Color.white)
@@ -453,8 +439,8 @@ extension CalendarView {
     // Extracted occupancy row view
     private func occupancyRow(for roomIndex: Int, isStandardRoom: Bool, geometry: GeometryProxy) -> some View {
         HStack(spacing: 0) {
-            // Get stay ranges from the view model
-            let stayRanges = viewModel.getStayRanges(for: roomIndex, isStandardRoom: isStandardRoom)
+            // Get stay configurations from the view model
+            let stayConfigurations = viewModel.getOccupancyRowConfiguration(for: roomIndex, isStandardRoom: isStandardRoom)
             
             // Now render the cells with labels in the middle of stays
             return ZStack(alignment: .leading) {
@@ -472,24 +458,22 @@ extension CalendarView {
                 }
                 
                 // Shaped occupancy containers
-                ForEach(stayRanges.indices, id: \.self) { index in
-                    let stay = stayRanges[index]
-                    let stayWidth = CGFloat(stay.endIndex - stay.startIndex + 1) * viewModel.getDayColumnWidth()
-                    let stayOffset = CGFloat(stay.startIndex) * viewModel.getDayColumnWidth()
+                ForEach(stayConfigurations.indices, id: \.self) { index in
+                    let config = stayConfigurations[index]
                     
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(stay.guest.color)
-                        .frame(width: stayWidth - 32, height: 44)
+                        .fill(config.color)
+                        .frame(width: config.width, height: 44)
                         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                         .overlay(
-                            Text(stay.guest.name)
+                            Text(config.guest.name)
                                 .font(.system(size: 11, weight: .medium, design: .default))
-                                .foregroundColor(viewModel.darkenColor(stay.guest.color))
+                                .foregroundColor(config.textColor)
                                 .padding(.horizontal, 4)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                         )
-                        .position(x: stayOffset + stayWidth/2, y: 30) // Center in the cell
+                        .position(x: config.offset, y: 30) // Center in the cell
                 }
             }
         }
