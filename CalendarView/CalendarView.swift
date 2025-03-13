@@ -381,14 +381,8 @@ extension CalendarView {
     private func todayButton() -> some View {
         Button(action: {}) {
             Text("Today")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.black)
-                .padding(12)
-                .background(Color.white)
-                .cornerRadius(8)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
+        .applyActionButtonStyle()
     }
     
     // Week picker component
@@ -402,17 +396,12 @@ extension CalendarView {
                 HStack {
                     Text(selectedDateRange)
                         .font(.subheadline)
-                        .foregroundColor(.black)
                     
                     Image(systemName: isWeekPickerVisible ? "chevron.up" : "chevron.down")
                         .font(.caption)
-                        .foregroundColor(.black)
                 }
-                .padding(12)
-                .background(Color.white)
-                .cornerRadius(8)
-                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
+            .applyActionButtonStyle()
             
             // Dropdown menu
             if isWeekPickerVisible {
@@ -493,11 +482,8 @@ extension CalendarView {
                 }
             }) {
                 Image(systemName: "chevron.left")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
-                    .padding(12)
             }
+            .applyNavigationButtonStyle(isGrouped: true, position: .leading)
             
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
@@ -511,11 +497,8 @@ extension CalendarView {
                 }
             }) {
                 Image(systemName: "chevron.right")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
-                    .padding(12)
             }
+            .applyNavigationButtonStyle(isGrouped: true, position: .trailing)
         }
         .background(Color.white)
         .cornerRadius(8)
